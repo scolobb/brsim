@@ -45,3 +45,7 @@ type Result  = Symbols
 data InteractiveProcess = InteractiveProcess { contexts       :: [Context]
                                              , results        :: [Result]
                                              } deriving (Show, Read, Eq)
+
+stateSequence :: InteractiveProcess -> [State]
+stateSequence (InteractiveProcess [] []) = []
+stateSequence (InteractiveProcess (c0:cs) rs) = c0 : (map (uncurry Set.union) $ zip cs rs)
