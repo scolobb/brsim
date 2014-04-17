@@ -3,7 +3,6 @@
 Defines reaction systems and some of their basic dynamics.-}
 
 module ReactionSystems ( Symbol(..)
-                       , name
                        , Symbols
                        ) where
 
