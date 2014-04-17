@@ -13,9 +13,9 @@ newtype Symbol = Symbol { name :: String } deriving (Show, Read, Ord, Eq)
 
 type Symbols = Set.Set Symbol
 
-data Rule = Rule { reactants :: Symbols
-                 , inhibitors :: Symbols
-                 , products :: Symbols
-                 } deriving (Show, Read, Ord, Eq)
+data Reaction = Reaction { reactants :: Symbols
+                         , inhibitors :: Symbols
+                         , products :: Symbols
+                         } deriving (Show, Read, Ord, Eq)
 
-type Rules = Set.Set Rule
+type Reactions = Set.Set Reaction
