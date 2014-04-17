@@ -27,12 +27,16 @@ data ReactionSystem = ReactionSystem { symbols   :: Symbols
 enabled :: Reaction -> Symbols -> Bool
 enabled (Reaction r i _) ss = (r `Set.isSubsetOf` ss) && (not (i `Set.isSubsetOf` ss))
 
+en = enabled
+
 applyOne :: Reaction -> Symbols -> Symbols
 applyOne a@(Reaction _ _ p) ss | enabled a ss = p
 applyOne _ _ | otherwise = Set.empty
 
 apply :: Reactions -> Symbols -> Symbols
 apply as ss = foldMap ((flip $ applyOne) ss) as
+
+res = apply
 
 type Context = Symbols
 type State   = Symbols
