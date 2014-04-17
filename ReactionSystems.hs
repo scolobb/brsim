@@ -13,13 +13,13 @@ newtype Symbol = Symbol { name :: String } deriving (Show, Read, Ord, Eq)
 
 type Symbols = Set.Set Symbol
 
-data Reaction = Reaction { reactants :: Symbols
+data Reaction = Reaction { reactants  :: Symbols
                          , inhibitors :: Symbols
-                         , products :: Symbols
+                         , products   :: Symbols
                          } deriving (Show, Read, Ord, Eq)
 
 type Reactions = Set.Set Reaction
 
-data ReactionSystem = ReactionSystem { symbols :: Symbols
+data ReactionSystem = ReactionSystem { symbols   :: Symbols
                                      , reactions :: Reactions
                                      } deriving (Show, Read, Eq)
