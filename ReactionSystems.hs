@@ -8,6 +8,7 @@ module ReactionSystems ( Symbol(..)
                        ) where
 
 import qualified Data.Set as Set
+import Data.Foldable (foldMap)
 
 newtype Symbol = Symbol { name :: String } deriving (Show, Read, Ord, Eq)
 
@@ -23,3 +24,13 @@ type Reactions = Set.Set Reaction
 data ReactionSystem = ReactionSystem { symbols   :: Symbols
                                      , reactions :: Reactions
                                      } deriving (Show, Read, Eq)
+
+enabled :: Reaction -> Symbols -> Bool
+enabled (Reaction r i _) ss = (r `Set.isSubsetOf` ss) && (not (i `Set.isSubsetOf` ss))
+
+applyOne :: Reaction -> Symbols -> Symbols
+applyOne a@(Reaction _ _ p) ss | enabled a ss = p
+applyOne _ _ | otherwise = Set.empty
+
+apply :: Reactions -> Symbols -> Symbols
+apply as ss = foldMap ((flip $ applyOne) ss) as
