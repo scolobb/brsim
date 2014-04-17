@@ -33,3 +33,12 @@ applyOne _ _ | otherwise = Set.empty
 
 apply :: Reactions -> Symbols -> Symbols
 apply as ss = foldMap ((flip $ applyOne) ss) as
+
+type Context = Symbols
+type State   = Symbols
+type Result  = Symbols
+
+data InteractiveProcess = InteractiveProcess { reactionSystem :: ReactionSystem
+                                             , contexts       :: [Context]
+                                             , results        :: [Context]
+                                             } deriving (Show, Read, Eq)
