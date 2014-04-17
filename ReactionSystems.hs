@@ -19,3 +19,7 @@ data Reaction = Reaction { reactants :: Symbols
                          } deriving (Show, Read, Ord, Eq)
 
 type Reactions = Set.Set Reaction
+
+data ReactionSystem = ReactionSystem { symbols :: Symbols
+                                     , reactions :: Reactions
+                                     } deriving (Show, Read, Eq)
