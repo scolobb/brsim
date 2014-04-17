@@ -42,7 +42,6 @@ type Context = Symbols
 type State   = Symbols
 type Result  = Symbols
 
-data InteractiveProcess = InteractiveProcess { reactionSystem :: ReactionSystem
-                                             , contexts       :: [Context]
+data InteractiveProcess = InteractiveProcess { contexts       :: [Context]
                                              , results        :: [Context]
                                              } deriving (Show, Read, Eq)
