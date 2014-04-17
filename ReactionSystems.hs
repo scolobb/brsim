@@ -43,5 +43,5 @@ type State   = Symbols
 type Result  = Symbols
 
 data InteractiveProcess = InteractiveProcess { contexts       :: [Context]
-                                             , results        :: [Context]
+                                             , results        :: [Result]
                                              } deriving (Show, Read, Eq)
