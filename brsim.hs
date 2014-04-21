@@ -3,6 +3,7 @@
 A Basic Reaction Systems Simulator. -}
 
 import qualified System.Console.Argument as Arg
+import System.Console.Command
 
 -- | The possible reaction description formats.
 data ReactionFormat = Plain -- ^ A reaction is given as three lists of symbol names.
@@ -29,6 +30,16 @@ reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Arrow
 \of reactants, inhibitors, and products respectively.  Thus, the same reaction\
 \can be written in the following way:\n\n\
 \  a b, e f, c d\n\n"
+
+run = Command { name = "run"
+              , action = withNonOption Arg.file $
+                         \rsFile ->
+                         withOption reactionFormatOpt $
+                         \format -> io $ do
+                           putStrLn $ "Read" ++ show rsFile ++ " in format " ++ show format ++ "."
+              , description = "run <file> -- run the simulation of the reaction system\
+\given in <file>.  Relevant options: --format."
+              }
 
 main :: IO ()
 main = return ()
