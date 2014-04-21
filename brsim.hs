@@ -3,8 +3,8 @@
 
 A Basic Reaction Systems Simulator. -}
 
-import Parser
 import ReactionSystems
+import Parser
 import qualified System.Console.Argument as Arg
 import qualified System.Console.Command as Cmd
 import System.Console.Program
