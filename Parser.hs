@@ -7,6 +7,7 @@ module Parser ( readSymbols
               , readPlusSymbols
               , readSpaceSymbols
               , readPlainReaction
+              , readArrowReaction
               ) where
 
 import ReactionSystems
@@ -36,3 +37,15 @@ readPlainReaction :: Text.Text -> Reaction
 readPlainReaction txt = let parts = Text.splitOn "," txt
                             [rcts, inh, prods] = map readSpaceSymbols parts
                         in Reaction rcts inh prods
+
+-- | Parses a reaction in arrow format.  A reaction which consumes
+-- symbols 'a' and 'b', produces 'c' and 'd', and is inhibited by 'e'
+-- and 'f' is written as follows: a+b -> c+d|e f.
+readArrowReaction :: Text.Text -> Reaction
+readArrowReaction txt =
+  let (txtRcts, rest) = Text.breakOn "->" txt
+      (txtProds, txtInh) = Text.breakOn "|" $ Text.drop 2 rest
+      rcts  = readPlusSymbols  txtRcts
+      prods = readPlusSymbols  txtProds
+      inh   = readSpaceSymbols $ Text.tail txtInh
+  in Reaction rcts inh prods
