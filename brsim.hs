@@ -38,7 +38,11 @@ run = Command { name = "run"
                          withOption reactionFormatOpt $
                          \format -> io $ do
                            putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
-              , description = "Run the simulation of the reaction system given in FILE.\n"
+              , description = "Run the simulation of the reaction system given in FILE.\n\n\
+\The input file should contain a description of the reaction system and, optionally, a\n\
+\list of contexts to run the simulation in.  If the reaction system and the contexts\n\
+\are given in the same file, they should be separated by a line containing three\n\
+\dashes: \"---\".\n"
               }
 
 help = Command { name = "help"
