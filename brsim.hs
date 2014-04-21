@@ -41,8 +41,8 @@ readInput rsFile format ctxFile = do
 
 -- | Runs the simulation of the supplied reaction system with the
 -- given context sequence.
-runInput :: FilePath -> ReactionFormat -> FilePath -> IO ()
-runInput rsFile format ctxFile = do
+runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> IO ()
+runInput rsFile format ctxFile outputFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
 
   putStrLn $ show rs
@@ -72,7 +72,11 @@ reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Arrow
 contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
                  "\n    The file listing the contexts of an interactive process.\n\n\
 \    If the context file is given, it should contain one context per line, each context\n\
-\    being represented as a list of symbols."
+\    being represented as a list of symbols.\n"
+
+outputFileOpt = Arg.option ['o'] ["output"] (Arg.optional "" Arg.file) ""
+                "\n    The file to write the output to.  If no output file is specified,\n\
+\    the output is written to the standard output."
 
 runCmd = Cmd.Command { Cmd.name = "run"
                      , Cmd.action = Cmd.withNonOption Arg.file $
@@ -81,7 +85,9 @@ runCmd = Cmd.Command { Cmd.name = "run"
                                     \format ->
                                     Cmd.withOption contextFileOpt $
                                     \contextFile ->
-                                    Cmd.io $ runInput rsFile format contextFile
+                                    Cmd.withOption outputFileOpt $
+                                    \outputFile ->
+                                    Cmd.io $ runInput rsFile format contextFile outputFile
                      , Cmd.description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
