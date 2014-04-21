@@ -45,8 +45,13 @@ runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> IO ()
 runInput rsFile format ctxFile outputFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
 
-  putStrLn $ show rs
-  putStrLn $ show ctx
+  let res = run rs ctx
+
+  outputFunc $ show res
+
+  where outputFunc = case outputFile of
+          "" -> putStr
+          file -> writeFile file
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
