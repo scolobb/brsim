@@ -42,8 +42,15 @@ run = Command { name = "run"
 \given in <file>.  Relevant options: --format."
               }
 
+brsimCommand = Command { name = "brsim"
+                       , action = io $ do
+                         putStrLn "No reaction system specified.\n\n"
+                         showUsage brsimCommands
+                       , description = "A Basic Reaction System Simulator."
+                       }
+
 brsimCommands :: Commands
-brsimCommands = Node run []
+brsimCommands = Node brsimCommand [Node run []]
 
 main :: IO ()
 main = single brsimCommands
