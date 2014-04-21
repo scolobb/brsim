@@ -8,6 +8,8 @@ module Parser ( readSymbols
               , readSpaceSymbols
               , readPlainReaction
               , readArrowReaction
+              , readPlainReactions
+              , readArrowReactions
               ) where
 
 import ReactionSystems
@@ -49,3 +51,26 @@ readArrowReaction txt =
       prods = readPlusSymbols  txtProds
       inh   = readSpaceSymbols $ Text.tail txtInh
   in Reaction rcts inh prods
+
+-- Splits the supplied text (third argument) into lines, throws away
+-- the lines for which the filtering function (first argument) is
+-- true, and applies the processing function (second argument) to the
+-- remaining lines.
+--
+-- This function will also discard whitespace lines.
+mapGoodLines :: (Text.Text -> Bool) -> (Text.Text -> a) -> Text.Text -> [a]
+mapGoodLines flt func = map func . filter (not . flt) . stripFilter . Text.lines
+
+commentLine = Text.isPrefixOf "#"
+
+-- | Reads a list of reactions in plain format.  Reactions are given
+-- one per line.  Whitespace lines and lines starting with the hash
+-- symbol are discarded.
+readPlainReactions :: Text.Text -> [Reaction]
+readPlainReactions = mapGoodLines commentLine readPlainReaction
+
+-- | Reads a list of reactions in arrow format.  Reactions are given
+-- one per line.  Whitespace lines and lines starting with the hash
+-- symbol are discarded.
+readArrowReactions :: Text.Text -> [Reaction]
+readArrowReactions = mapGoodLines commentLine readArrowReaction
