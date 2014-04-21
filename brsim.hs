@@ -15,7 +15,7 @@ reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
                                "arrow" -> Right $ Arrow
                                str -> Left $ "Unknown reaction format: " ++ show str
-                          , Arg.name = "reaction format"
+                          , Arg.name = "arrow|plain"
                           , Arg.defaultValue = Just Arrow
                           }
 
