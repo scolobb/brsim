@@ -30,13 +30,20 @@ reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Arrow
 \    If the value of this argument is \"plain\", the rules are specified as lists of\n\
 \    reactants, inhibitors, and products respectively.  Thus, the same reaction can be\n\
 \    written in the following way:\n\n\
-\        a b, e f, c d"
+\        a b, e f, c d\n"
+
+contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
+                 "\n    The file listing the contexts of an interactive process.\n\n\
+\    If the context file is given, it should contain one context per line, each context\n\
+\    being represented as a list of symbols."
 
 run = Command { name = "run"
               , action = withNonOption Arg.file $
                          \rsFile ->
                          withOption reactionFormatOpt $
-                         \format -> io $ do
+                         \format ->
+                         withOption contextFileOpt $
+                         \contextFile -> io $ do
                            putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
               , description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
