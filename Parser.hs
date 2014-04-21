@@ -10,6 +10,7 @@ module Parser ( readSymbols
               , readArrowReaction
               , readPlainReactions
               , readArrowReactions
+              , readListOfListsOfSymbols
               ) where
 
 import ReactionSystems
@@ -76,3 +77,9 @@ readPlainReactions = mapGoodLines commentLine readPlainReaction
 -- symbol are discarded.
 readArrowReactions :: Text.Text -> [Reaction]
 readArrowReactions = mapGoodLines commentLine readArrowReaction
+
+-- | Reads a list of lists of symbol.  Lists of symbols are given one
+-- per line.  Whitespace lines and lines starting with the hash symbol
+-- are discarded.
+readListOfListsOfSymbols :: Text.Text -> [Symbols]
+readListOfListsOfSymbols = mapGoodLines commentLine readSpaceSymbols
