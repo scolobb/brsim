@@ -49,7 +49,9 @@ readArrowReaction txt =
       (txtProds, txtInh) = Text.breakOn "|" $ Text.drop 2 rest
       rcts  = readPlusSymbols  txtRcts
       prods = readPlusSymbols  txtProds
-      inh   = readSpaceSymbols $ Text.tail txtInh
+      inh   = if not $ Text.null txtInh
+              then readSpaceSymbols $ Text.tail txtInh
+              else Set.empty
   in Reaction rcts inh prods
 
 -- Splits the supplied text (third argument) into lines, throws away
