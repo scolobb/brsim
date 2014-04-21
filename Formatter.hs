@@ -18,7 +18,8 @@ showSymbol = Text.pack . name
 
 -- | Pretty-print the supplied set of symbol as a list.
 showSymbols :: Symbols -> Text.Text
-showSymbols = Text.intercalate " " . Set.toList . Set.map showSymbol
+showSymbols ss | Set.null ss = "<empty>"
+showSymbols ss | otherwise = (Text.intercalate " " . Set.toList . Set.map showSymbol) ss
 
 -- | Pretty-print a list of lists of symbols.
 showListOfListsOfSymbols :: [Symbols] -> Text.Text
