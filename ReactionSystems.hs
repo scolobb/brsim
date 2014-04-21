@@ -7,6 +7,7 @@ module ReactionSystems ( Symbol(..)
                        , Reaction(..)
                        , Reactions
                        , ReactionSystem(..)
+                       , makeReactionSystem
                        , enabled
                        , en
                        , applyOne
@@ -39,6 +40,12 @@ type Reactions = Set.Set Reaction
 data ReactionSystem = ReactionSystem { symbols   :: Symbols
                                      , reactions :: Reactions
                                      } deriving (Show, Read, Eq)
+
+makeReactionSystem :: [Reaction] -> ReactionSystem
+makeReactionSystem rs = let reactions = Set.fromList rs
+                            symbols = foldMap listSymbols reactions
+                        in ReactionSystem symbols reactions
+  where listSymbols (Reaction r i p) = r `Set.union` i `Set.union` p
 
 enabled :: Reaction -> Symbols -> Bool
 enabled (Reaction r i _) ss = (r `Set.isSubsetOf` ss) && (not (i `Set.isSubsetOf` ss))
