@@ -4,6 +4,21 @@ Defines reaction systems and some of their basic dynamics.-}
 
 module ReactionSystems ( Symbol(..)
                        , Symbols
+                       , Reaction(..)
+                       , Reactions
+                       , ReactionSystem(..)
+                       , enabled
+                       , en
+                       , applyOne
+                       , apply
+                       , res
+                       , Context
+                       , State
+                       , Result
+                       , InteractiveProcess(..)
+                       , stateSequence
+                       , run
+                       , run'
                        ) where
 
 import qualified Data.Set as Set
