@@ -52,7 +52,7 @@ stateSequence (InteractiveProcess [] []) = []
 stateSequence (InteractiveProcess (c0:cs) rs) = c0 : (map (uncurry Set.union) $ zip cs rs)
 
 run :: ReactionSystem -> [Context] -> [Result]
-run (ReactionSystem _ rs) = foldl' (\res@(lastRes:_) ctx -> (apply rs $ lastRes `Set.union` ctx):res) [Set.empty]
+run (ReactionSystem _ rs) = reverse . foldl' (\res@(lastRes:_) ctx -> (apply rs $ lastRes `Set.union` ctx):res) [Set.empty]
 
 run' :: ReactionSystem -> [Context] -> InteractiveProcess
 run' rs ctx = InteractiveProcess ctx $ run rs ctx
