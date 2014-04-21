@@ -1,15 +1,43 @@
+{-# LANGUAGE OverloadedStrings #-}
 {- brsim.hs
 
 A Basic Reaction Systems Simulator. -}
 
+import Parser
+import ReactionSystems
 import qualified System.Console.Argument as Arg
 import qualified System.Console.Command as Cmd
 import System.Console.Program
+import qualified Data.Text.Lazy as Text
+import qualified Data.Text.Lazy.IO as TextIO
 
 -- | The possible reaction description formats.
 data ReactionFormat = Plain -- ^ A reaction is given as three lists of symbol names.
                     | Arrow -- ^ A reaction is given in a notation similar to the chemical one.
                     deriving (Eq, Ord, Show, Read)
+
+-- | Reads the supplied file containing the description of the
+-- reaction system and, maybe, the list of contexts.  If a separate
+-- context file is specified, the list of context in the reaction
+-- system file is ignored.
+readInput :: FilePath -> ReactionFormat -> FilePath -> IO (ReactionSystem, [Context])
+readInput rsFile format ctxFile = do
+  desc <- TextIO.readFile rsFile
+  let (txtRs, maybeTxtCtx) = Text.breakOn "\n---" desc
+
+  txtCtx <- if ctxFile /= ""
+            then TextIO.readFile ctxFile
+            else if Text.null maybeTxtCtx
+                 then error "ERROR: No context specified."
+                 else return maybeTxtCtx
+
+  let rules = case format of
+        Plain -> readPlainReactions txtRs
+        Arrow -> readArrowReactions txtRs
+
+      contexts = readListOfListsOfSymbols txtCtx
+
+  return (makeReactionSystem rules, contexts)
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
