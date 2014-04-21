@@ -42,8 +42,8 @@ readInput rsFile format ctxFile = do
 
 -- | Runs the simulation of the supplied reaction system with the
 -- given context sequence.
-runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> IO ()
-runInput rsFile format ctxFile outputFile = do
+runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
+runInput rsFile format ctxFile outputFile annotationFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
   let res = run rs ctx
   outputFunc $ showListOfListsOfSymbols res
@@ -81,6 +81,12 @@ outputFileOpt = Arg.option ['o'] ["output"] (Arg.optional "" Arg.file) ""
                 "\n    The file to write the output to.  If no output file is specified,\n\
 \    the output is written to the standard output."
 
+annotateOpt = Arg.option ['a'] ["annotate"] (Arg.optional "" Arg.file) ""
+                "\n    The file to write annotated output to.  If this option is\n\
+\    specified, the simulator will write a detailed description of the activity of the\n\
+\    system during the simulation.  For each step, it will write the context, the\n\
+\    latest result, the current state, and the enabled rules."
+
 runCmd = Cmd.Command { Cmd.name = "run"
                      , Cmd.action = Cmd.withNonOption Arg.file $
                                     \rsFile ->
@@ -90,7 +96,9 @@ runCmd = Cmd.Command { Cmd.name = "run"
                                     \contextFile ->
                                     Cmd.withOption outputFileOpt $
                                     \outputFile ->
-                                    Cmd.io $ runInput rsFile format contextFile outputFile
+                                    Cmd.withOption annotateOpt $
+                                    \annotationFile ->
+                                    Cmd.io $ runInput rsFile format contextFile outputFile annotationFile
                      , Cmd.description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
