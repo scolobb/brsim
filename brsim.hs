@@ -20,7 +20,7 @@ reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                           }
 
 reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Arrow
-                    "The format of the reaction description.\n\
+                    "\n    The format of the reaction description.\n\n\
 \    The default value of this argument is \"arrow\", in which case the rules should be\n\
 \    specified using a notation similar to the chemical notation:\n\n\
 \        <left hand side> -> <right hand side> | <list of inhibitors>\n\n\
@@ -38,9 +38,13 @@ run = Command { name = "run"
                          withOption reactionFormatOpt $
                          \format -> io $ do
                            putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
-              , description = "Run the simulation of the reaction system\
-\given in FILE.\n"
+              , description = "Run the simulation of the reaction system given in FILE.\n"
               }
+
+help = Command { name = "help"
+               , action = io $ showUsage brsimCommands
+               , description = "Show this usage information."
+               }
 
 brsimCommand = Command { name = "brsim"
                        , action = io $ do
@@ -50,7 +54,7 @@ brsimCommand = Command { name = "brsim"
                        }
 
 brsimCommands :: Commands
-brsimCommands = Node brsimCommand [Node run []]
+brsimCommands = Node brsimCommand [Node run [], Node help []]
 
 main :: IO ()
 main = single brsimCommands
