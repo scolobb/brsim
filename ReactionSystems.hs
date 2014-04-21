@@ -48,7 +48,7 @@ makeReactionSystem rs = let reactions = Set.fromList rs
   where listSymbols (Reaction r i p) = r `Set.union` i `Set.union` p
 
 enabled :: Reaction -> Symbols -> Bool
-enabled (Reaction r i _) ss = (r `Set.isSubsetOf` ss) && (not (i `Set.isSubsetOf` ss))
+enabled (Reaction r i _) ss = (r `Set.isSubsetOf` ss) && (Set.null i || not (i `Set.isSubsetOf` ss))
 
 en = enabled
 
