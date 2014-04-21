@@ -5,6 +5,7 @@ A Basic Reaction Systems Simulator. -}
 
 import ReactionSystems
 import Parser
+import Formatter
 import qualified System.Console.Argument as Arg
 import qualified System.Console.Command as Cmd
 import System.Console.Program
@@ -44,14 +45,11 @@ readInput rsFile format ctxFile = do
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> IO ()
 runInput rsFile format ctxFile outputFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
-
   let res = run rs ctx
-
-  outputFunc $ show res
-
+  outputFunc $ showListOfListsOfSymbols res
   where outputFunc = case outputFile of
-          "" -> putStr
-          file -> writeFile file
+          "" -> TextIO.putStr
+          file -> TextIO.writeFile file
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
