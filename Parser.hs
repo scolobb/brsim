@@ -14,7 +14,7 @@ module Parser ( readSymbols
               ) where
 
 import ReactionSystems
-import qualified Data.Text as Text
+import qualified Data.Text.Lazy as Text
 import qualified Data.Set as Set
 
 -- Strips leading and trailing whitespace from all texts in the
