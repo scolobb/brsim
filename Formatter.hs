@@ -3,7 +3,10 @@
 
 Pretty-prints the components of reaction systems to string.-}
 
-module Formatter () where
+module Formatter ( showSymbol
+                 , showSymbols
+                 , showListOfListsOfSymbols
+                 ) where
 
 import ReactionSystems
 import qualified Data.Text.Lazy as Text
