@@ -4,6 +4,7 @@ A Basic Reaction Systems Simulator. -}
 
 import qualified System.Console.Argument as Arg
 import System.Console.Command
+import System.Console.Program
 
 -- | The possible reaction description formats.
 data ReactionFormat = Plain -- ^ A reaction is given as three lists of symbol names.
@@ -36,10 +37,13 @@ run = Command { name = "run"
                          \rsFile ->
                          withOption reactionFormatOpt $
                          \format -> io $ do
-                           putStrLn $ "Read" ++ show rsFile ++ " in format " ++ show format ++ "."
+                           putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
               , description = "run <file> -- run the simulation of the reaction system\
 \given in <file>.  Relevant options: --format."
               }
 
+brsimCommands :: Commands
+brsimCommands = Node run []
+
 main :: IO ()
-main = return ()
+main = single brsimCommands
