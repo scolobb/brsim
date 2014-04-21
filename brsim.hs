@@ -3,7 +3,7 @@
 A Basic Reaction Systems Simulator. -}
 
 import qualified System.Console.Argument as Arg
-import System.Console.Command
+import qualified System.Console.Command as Cmd
 import System.Console.Program
 
 -- | The possible reaction description formats.
@@ -37,35 +37,35 @@ contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
 \    If the context file is given, it should contain one context per line, each context\n\
 \    being represented as a list of symbols."
 
-run = Command { name = "run"
-              , action = withNonOption Arg.file $
-                         \rsFile ->
-                         withOption reactionFormatOpt $
-                         \format ->
-                         withOption contextFileOpt $
-                         \contextFile -> io $ do
-                           putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
-              , description = "Run the simulation of the reaction system given in FILE.\n\n\
+run = Cmd.Command { Cmd.name = "run"
+                  , Cmd.action = Cmd.withNonOption Arg.file $
+                                 \rsFile ->
+                                 Cmd.withOption reactionFormatOpt $
+                                 \format ->
+                                 Cmd.withOption contextFileOpt $
+                                 \contextFile -> Cmd.io $ do
+                                   putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
+                  , Cmd.description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
 \are given in the same file, they should be separated by a line containing three\n\
 \dashes: \"---\".\n"
               }
 
-help = Command { name = "help"
-               , action = io $ showUsage brsimCommands
-               , description = "Show this usage information."
+help = Cmd.Command { Cmd.name = "help"
+                   , Cmd.action = Cmd.io $ showUsage brsimCommands
+                   , Cmd.description = "Show this usage information."
                }
 
-brsimCommand = Command { name = "brsim"
-                       , action = io $ do
-                         putStrLn "ERROR: No reaction system specified.  Showing usage information.\n"
-                         showUsage brsimCommands
-                       , description = "A Basic Reaction System Simulator."
-                       }
+brsimCommand = Cmd.Command { Cmd.name = "brsim"
+                           , Cmd.action = Cmd.io $ do
+                             putStrLn "ERROR: No reaction system specified.  Showing usage information.\n"
+                             showUsage brsimCommands
+                           , Cmd.description = "A Basic Reaction System Simulator."
+                           }
 
-brsimCommands :: Commands
-brsimCommands = Node brsimCommand [Node run [], Node help []]
+brsimCommands :: Cmd.Commands
+brsimCommands = Cmd.Node brsimCommand [Cmd.Node run [], Cmd.Node help []]
 
 main :: IO ()
 main = single brsimCommands
