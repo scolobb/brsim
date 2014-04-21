@@ -6,6 +6,7 @@ Reads the components of a reaction system from string.-}
 module Parser ( readSymbols
               , readPlusSymbols
               , readSpaceSymbols
+              , readPlainReaction
               ) where
 
 import ReactionSystems
@@ -27,3 +28,11 @@ readPlusSymbols = readSymbols "+"
 
 -- | Parses a space-separated list of symbols.
 readSpaceSymbols = readSymbols " "
+
+-- | Parses a reaction in plain format.  A reaction which consumes
+-- symbols 'a' and 'b', produces 'c' and 'd', and is inhibited by 'e'
+-- and 'f' is written as follows: a b, e f, c d.
+readPlainReaction :: Text.Text -> Reaction
+readPlainReaction txt = let parts = Text.splitOn "," txt
+                            [rcts, inh, prods] = map readSpaceSymbols parts
+                        in Reaction rcts inh prods
