@@ -29,7 +29,7 @@ readInput rsFile format ctxFile = do
             then TextIO.readFile ctxFile
             else if Text.null maybeTxtCtx
                  then error "ERROR: No context specified."
-                 else return maybeTxtCtx
+                 else return $ Text.drop 4 maybeTxtCtx
 
   let rules = case format of
         Plain -> readPlainReactions txtRs
