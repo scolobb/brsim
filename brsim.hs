@@ -39,6 +39,15 @@ readInput rsFile format ctxFile = do
 
   return (makeReactionSystem rules, contexts)
 
+-- | Runs the simulation of the supplied reaction system with the
+-- given context sequence.
+runInput :: FilePath -> ReactionFormat -> FilePath -> IO ()
+runInput rsFile format ctxFile = do
+  (rs, ctx) <- readInput rsFile format ctxFile
+
+  putStrLn $ show rs
+  putStrLn $ show ctx
+
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
                                "arrow" -> Right $ Arrow
@@ -71,8 +80,8 @@ runCmd = Cmd.Command { Cmd.name = "run"
                                     Cmd.withOption reactionFormatOpt $
                                     \format ->
                                     Cmd.withOption contextFileOpt $
-                                    \contextFile -> Cmd.io $ do
-                                      putStrLn $ "Read " ++ show rsFile ++ " in format " ++ show format ++ "."
+                                    \contextFile ->
+                                    Cmd.io $ runInput rsFile format contextFile
                      , Cmd.description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
