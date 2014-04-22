@@ -29,7 +29,7 @@ readInput rsFile format ctxFile = do
   txtCtx <- if ctxFile /= ""
             then TextIO.readFile ctxFile
             else if Text.null maybeTxtCtx
-                 then error "ERROR: No context specified."
+                 then return Text.empty
                  else return $ Text.drop 4 maybeTxtCtx
 
   let rules = case format of
@@ -45,12 +45,22 @@ readInput rsFile format ctxFile = do
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> Bool -> IO ()
 runInput rsFile format ctxFile outputFile annotationFile interactive = do
   (rs, ctx) <- readInput rsFile format ctxFile
-  let res = run rs ctx
-  outputFunc $ showListOfListsOfSymbols res
 
-  if annotationFile /= ""
-    then TextIO.writeFile annotationFile $ annotateFunc rs $ makeInteractiveProcess ctx res
-    else return ()
+  if not interactive
+    then do
+    if ctx == []
+      then error "ERROR: No context specified."
+      else return ()
+
+    let res = run rs ctx
+    outputFunc $ showListOfListsOfSymbols res
+
+    if annotationFile /= ""
+      then TextIO.writeFile annotationFile $ annotateFunc rs $ makeInteractiveProcess ctx res
+      else return ()
+
+    else do
+    return ()
 
   where outputFunc = case outputFile of
           "" -> TextIO.putStr
