@@ -81,6 +81,17 @@ interactiveRun rsFile format ctxFile outputFile annotationFile = do
                           then run rs contexts
                           else [Set.empty]
 
+  if contexts /= []
+    then do
+    putStrLn "Context sequence provided.  The description of the last reached state follows.\n"
+
+    let state = (last contexts) `Set.union` (head results)
+    TextIO.putStr $ annotateFunc rs (length contexts - 1) (last contexts) (head results)
+    TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols state)
+    putStrLn ""
+    else do
+    putStrLn "No context sequence provided, starting from scratch.\n"
+
   furtherResults <- go rs (head results) (length contexts) []
 
   return ()
