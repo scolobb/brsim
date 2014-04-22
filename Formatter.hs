@@ -9,6 +9,8 @@ module Formatter ( showSymbol
                  , showListOfListsOfSymbols
                  , showPlainReaction
                  , showArrowReaction
+                 , annotateStatePlain
+                 , annotateStateArrow
                  , annotatePlain
                  , annotateArrow
                  ) where
@@ -52,19 +54,33 @@ showArrowReaction (Reaction rcts inh prod) =
   in txtRcts `Text.append` "->" `Text.append` txtProd `Text.append`
      if not $ Set.null inh then "|" `Text.append` txtInh else ""
 
+-- Annotates a state of the supplied reaction system.
+annotateState :: (Reaction -> Text.Text) -> ReactionSystem -> Int -> Context -> Result -> Text.Text
+annotateState rformat (ReactionSystem _ rs) step ctx res =
+  let state = (ctx `Set.union` res)
+  in Text.unlines $ [ "STEP " `Text.append` (Text.pack $ show step)
+     , "Context:       " `Text.append` showSpaceSymbols ctx
+     , "Last result:   " `Text.append` showSpaceSymbols res
+     , "State:         " `Text.append` showSpaceSymbols state
+     , "Enabled rules:"
+     ] ++ (map (Text.append "  " . rformat) $ filter ((flip enabled) state) $ Set.toList rs)
+
+-- | Annotates a state of the supplied reaction system printing the
+-- reactions in plain format.
+annotateStatePlain :: ReactionSystem -> Int -> Context -> Result -> Text.Text
+annotateStatePlain = annotateState showPlainReaction
+
+-- | Annotates a state of the supplied reaction system printing the
+-- reactions in arrow format.
+annotateStateArrow :: ReactionSystem -> Int -> Context -> Result -> Text.Text
+annotateStateArrow = annotateState showArrowReaction
+
 -- Annotate an interactive process of the supplied reaction system
 -- using a supplied reaction formatting function.
 annotate :: (Reaction -> Text.Text) -> ReactionSystem -> InteractiveProcess -> Text.Text
-annotate rformat (ReactionSystem _ rs) (InteractiveProcess contexts results) =
-  Text.unlines $ intercalate [""] $ map annotateState $ zip3 [0..] contexts results
-  where annotateState (n, ctx, res) =
-          let state = (ctx `Set.union` res)
-          in [ "STEP " `Text.append` (Text.pack $ show n)
-             , "Context:       " `Text.append` showSpaceSymbols ctx
-             , "Last result:   " `Text.append` showSpaceSymbols res
-             , "State:         " `Text.append` showSpaceSymbols state
-             , "Enabled rules:"
-             ] ++ (map (Text.append "  " . rformat) $ filter ((flip enabled) state) $ Set.toList rs)
+annotate rformat rs (InteractiveProcess contexts results) =
+  Text.intercalate "\n" $ map annotateState' $ zip3 [0..] contexts results
+  where annotateState' (n, ctx, res) = annotateState rformat rs n ctx res
 
 -- | Annotate an interactive process of the supplied reaction system,
 -- printing rules in plain format.
