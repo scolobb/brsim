@@ -73,8 +73,8 @@ runInput rsFile format ctxFile outputFile annotationFile = do
   writeOutput rs (makeInteractiveProcess ctx res) format outputFile annotationFile
 
 -- Runs an interactive simulation of the supplied reaction system.
-interactiveRun :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
-interactiveRun rsFile format ctxFile outputFile annotationFile = do
+interactiveRun :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> FilePath -> IO ()
+interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = do
   (rs, contexts) <- readInput rsFile format ctxFile
 
   let results = if contexts /= []
@@ -167,6 +167,11 @@ interactiveOpt = Arg.option ['i'] ["interact"] (Arg.optional False Arg.boolean) 
 \    file.  In a similar way, if an annotation file is specified, the annotated\n\
 \    description of the interactive process will be produced."
 
+contextOutOpt = Arg.option ['c'] ["output-context"] (Arg.optional "" Arg.file) ""
+                "\n    The file to output the recorded context sequence to.\n\n\
+\    If a file is specified, the complete sequence of contexts supplied to the reaction\n\
+\    system during an interactive run will be written to it."
+
 runCmd = Cmd.Command { Cmd.name = "run"
                      , Cmd.action = Cmd.withNonOption Arg.file $
                                     \rsFile ->
@@ -197,7 +202,9 @@ interactCmd = Cmd.Command { Cmd.name = "interact"
                                          \outputFile ->
                                          Cmd.withOption annotateOpt $
                                          \annotationFile ->
-                                         Cmd.io $ interactiveRun rsFile format contextFile outputFile annotationFile
+                                         Cmd.withOption contextOutOpt $
+                                         \contextOutFile ->
+                                         Cmd.io $ interactiveRun rsFile format contextFile outputFile annotationFile contextOutFile
                           , Cmd.description = "Start an interactive simulation session.\n\n\
 \In this mode, the simulator will explicitly ask the user for contexts and will print\n\
 \out the next state interactively.  If a context sequence is specified in the input file\n\
