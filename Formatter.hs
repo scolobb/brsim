@@ -58,10 +58,10 @@ annotate rformat (ReactionSystem _ rs) (InteractiveProcess contexts results) =
   Text.unlines $ concatMap annotateState $ zip3 [1..] contexts results
   where annotateState (n, ctx, res) =
           let state = (ctx `Set.union` res)
-          in [ "STEP " `Text.append` (Text.pack $ show res)
-             , "Context:    " `Text.append` showSpaceSymbols ctx
-             , "Last result:" `Text.append` showSpaceSymbols res
-             , "State:      " `Text.append` showSpaceSymbols state
+          in [ "STEP " `Text.append` (Text.pack $ show n)
+             , "Context:     " `Text.append` showSpaceSymbols ctx
+             , "Last result: " `Text.append` showSpaceSymbols res
+             , "State:       " `Text.append` showSpaceSymbols state
              , "Enabled rules:"
              ] ++ (map (Text.append "  " . rformat) $ filter ((flip enabled) state) $ Set.toList rs)
 
