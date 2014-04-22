@@ -99,6 +99,10 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
 
   writeOutput rs (makeInteractiveProcess allContexts allResults) format outputFile annotationFile
 
+  if contextOutFile /= ""
+    then TextIO.writeFile contextOutFile $ showListOfListsOfSymbols allContexts
+    else return ()
+
   where go :: ReactionSystem -> Result -> Int -> [(Context, Result)] -> IO [(Context, Result)]
         go rs@(ReactionSystem _ reactions) res step acc = do
           putStr "Next context: "
