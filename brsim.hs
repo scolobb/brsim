@@ -29,7 +29,7 @@ readInput rsFile format ctxFile = do
   txtCtx <- if ctxFile /= ""
             then TextIO.readFile ctxFile
             else if Text.null maybeTxtCtx
-                 then  error "ERROR: No context specified."
+                 then return Text.empty
                  else return $ Text.drop 4 maybeTxtCtx
 
   let rules = case format of
@@ -45,6 +45,9 @@ readInput rsFile format ctxFile = do
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
 runInput rsFile format ctxFile outputFile annotationFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
+  if ctx == []
+    then error "ERROR: No context specified."
+    else return ()
 
   let res = run rs ctx
   outputFunc $ showListOfListsOfSymbols res
