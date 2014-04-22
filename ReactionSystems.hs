@@ -17,6 +17,7 @@ module ReactionSystems ( Symbol(..)
                        , State
                        , Result
                        , InteractiveProcess(..)
+                       , makeInteractiveProcess
                        , stateSequence
                        , run
                        , run'
@@ -68,6 +69,9 @@ type Result  = Symbols
 data InteractiveProcess = InteractiveProcess { contexts       :: [Context]
                                              , results        :: [Result]
                                              } deriving (Show, Read, Eq)
+
+makeInteractiveProcess :: [Context] -> [Result] -> InteractiveProcess
+makeInteractiveProcess ctx res = InteractiveProcess ctx $ Set.empty:res
 
 stateSequence :: InteractiveProcess -> [State]
 stateSequence (InteractiveProcess [] []) = []

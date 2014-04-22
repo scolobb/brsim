@@ -49,7 +49,7 @@ runInput rsFile format ctxFile outputFile annotationFile = do
   outputFunc $ showListOfListsOfSymbols res
 
   if annotationFile /= ""
-    then TextIO.writeFile annotationFile $ annotateFunc rs $ InteractiveProcess ctx res
+    then TextIO.writeFile annotationFile $ annotateFunc rs $ makeInteractiveProcess ctx res
     else return ()
 
   where outputFunc = case outputFile of
