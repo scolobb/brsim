@@ -11,6 +11,8 @@ import qualified System.Console.Command as Cmd
 import System.Console.Program
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
+import qualified Data.Set as Set
+import System.IO (stdout, hFlush)
 
 -- The possible reaction description formats.
 data ReactionFormat = Plain -- A reaction is given as three lists of symbol names.
@@ -69,6 +71,43 @@ runInput rsFile format ctxFile outputFile annotationFile = do
   let res = run rs ctx
 
   writeOutput rs (makeInteractiveProcess ctx res) format outputFile annotationFile
+
+-- Runs an interactive simulation of the supplied reaction system.
+interactiveRun :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
+interactiveRun rsFile format ctxFile outputFile annotationFile = do
+  (rs, contexts) <- readInput rsFile format ctxFile
+
+  let results = reverse $ if contexts /= []
+                          then run rs contexts
+                          else [Set.empty]
+
+  furtherResults <- go rs (head results) (length contexts) []
+
+  return ()
+
+  where go :: ReactionSystem -> Result -> Int -> [Result] -> IO [Result]
+        go rs@(ReactionSystem _ reactions) res step acc = do
+          putStr "Next context: "
+          hFlush stdout
+          ln <- TextIO.getLine
+          putStrLn ""
+
+          if ln == "STOP"
+            then return acc
+            else do
+            let ctx = readSpaceSymbols ln
+                state = ctx `Set.union` res
+                newRes = apply reactions state
+
+            TextIO.putStr $ annotateFunc rs step ctx res
+            TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols newRes)
+            putStrLn ""
+
+            go rs newRes (step + 1) (newRes:acc)
+
+        annotateFunc = case format of
+          Plain -> annotateStatePlain
+          Arrow -> annotateStateArrow
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
@@ -134,7 +173,17 @@ runCmd = Cmd.Command { Cmd.name = "run"
               }
 
 interactCmd = Cmd.Command { Cmd.name = "interact"
-                          , Cmd.action = Cmd.io $ putStrLn ""
+                          , Cmd.action = Cmd.withNonOption Arg.file $
+                                         \rsFile ->
+                                         Cmd.withOption reactionFormatOpt $
+                                         \format ->
+                                         Cmd.withOption contextFileOpt $
+                                         \contextFile ->
+                                         Cmd.withOption outputFileOpt $
+                                         \outputFile ->
+                                         Cmd.withOption annotateOpt $
+                                         \annotationFile ->
+                                         Cmd.io $ interactiveRun rsFile format contextFile outputFile annotationFile
                           , Cmd.description = "Start an interactive simulation session.\n\n\
 \In this mode, the simulator will explicitly ask the user for contexts and will print\n\
 \out the next state interactively.  If a context sequence is specified in the input file\n\
