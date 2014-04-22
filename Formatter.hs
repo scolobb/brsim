@@ -49,7 +49,8 @@ showArrowReaction (Reaction rcts inh prod) =
   let txtRcts = showPlusSymbols  rcts
       txtProd = showPlusSymbols  prod
       txtInh  = showSpaceSymbols inh
-  in txtRcts `Text.append` "->" `Text.append` txtProd `Text.append` "|" `Text.append` txtInh
+  in txtRcts `Text.append` "->" `Text.append` txtProd `Text.append`
+     if not $ Set.null inh then "|" `Text.append` txtInh else ""
 
 -- Annotate an interactive process of the supplied reaction system
 -- using a supplied reaction formatting function.
