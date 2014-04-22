@@ -47,9 +47,18 @@ runInput rsFile format ctxFile outputFile annotationFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
   let res = run rs ctx
   outputFunc $ showListOfListsOfSymbols res
+
+  if annotationFile /= ""
+    then TextIO.writeFile annotationFile $ annotateFunc rs $ InteractiveProcess ctx res
+    else return ()
+
   where outputFunc = case outputFile of
           "" -> TextIO.putStr
           file -> TextIO.writeFile file
+
+        annotateFunc = case format of
+          Plain -> annotatePlain
+          Arrow -> annotateArrow
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
