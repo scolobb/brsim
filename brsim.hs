@@ -124,6 +124,15 @@ runCmd = Cmd.Command { Cmd.name = "run"
 \dashes: \"---\".\n"
               }
 
+interactCmd = Cmd.Command { Cmd.name = "interact"
+                          , Cmd.action = Cmd.io $ putStrLn ""
+                          , Cmd.description = "Start an interactive simulation session.\n\n\
+\In this mode, the simulator will explicitly ask the user for contexts and will print\n\
+\out the next state interactively.  If a context sequence is specified in the input file\n\
+\or in a separate context file, the simulator will first run the reaction system with\n\
+\the given context sequence and will start the interactive session at the last state.\n"
+                          }
+
 help = Cmd.Command { Cmd.name = "help"
                    , Cmd.action = Cmd.io $ showUsage brsimCommands
                    , Cmd.description = "Show this usage information."
@@ -137,7 +146,7 @@ brsimCommand = Cmd.Command { Cmd.name = "brsim"
                            }
 
 brsimCommands :: Cmd.Commands
-brsimCommands = Cmd.Node brsimCommand [Cmd.Node runCmd [], Cmd.Node help []]
+brsimCommands = Cmd.Node brsimCommand [Cmd.Node runCmd [], Cmd.Node interactCmd [], Cmd.Node help []]
 
 main :: IO ()
 main = single brsimCommands
