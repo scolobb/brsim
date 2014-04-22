@@ -88,7 +88,7 @@ contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
 
 outputFileOpt = Arg.option ['o'] ["output"] (Arg.optional "" Arg.file) ""
                 "\n    The file to write the output to.  If no output file is specified,\n\
-\    the output is written to the standard output."
+\    the output is written to the standard output.\n"
 
 annotateOpt = Arg.option ['a'] ["annotate"] (Arg.optional "" Arg.file) ""
                 "\n    The file to write annotated output to.  If this option is\n\
