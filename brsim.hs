@@ -29,7 +29,7 @@ readInput rsFile format ctxFile = do
   txtCtx <- if ctxFile /= ""
             then TextIO.readFile ctxFile
             else if Text.null maybeTxtCtx
-                 then return Text.empty
+                 then  error "ERROR: No context specified."
                  else return $ Text.drop 4 maybeTxtCtx
 
   let rules = case format of
@@ -42,25 +42,16 @@ readInput rsFile format ctxFile = do
 
 -- Runs the simulation of the supplied reaction system with the given
 -- context sequence.
-runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> Bool -> IO ()
-runInput rsFile format ctxFile outputFile annotationFile interactive = do
+runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
+runInput rsFile format ctxFile outputFile annotationFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
 
-  if not interactive
-    then do
-    if ctx == []
-      then error "ERROR: No context specified."
-      else return ()
+  let res = run rs ctx
+  outputFunc $ showListOfListsOfSymbols res
 
-    let res = run rs ctx
-    outputFunc $ showListOfListsOfSymbols res
-
-    if annotationFile /= ""
-      then TextIO.writeFile annotationFile $ annotateFunc rs $ makeInteractiveProcess ctx res
-      else return ()
-
-    else do
-    return ()
+  if annotationFile /= ""
+    then TextIO.writeFile annotationFile $ annotateFunc rs $ makeInteractiveProcess ctx res
+    else return ()
 
   where outputFunc = case outputFile of
           "" -> TextIO.putStr
@@ -125,9 +116,7 @@ runCmd = Cmd.Command { Cmd.name = "run"
                                     \outputFile ->
                                     Cmd.withOption annotateOpt $
                                     \annotationFile ->
-                                    Cmd.withOption interactiveOpt $
-                                    \interactive ->
-                                    Cmd.io $ runInput rsFile format contextFile outputFile annotationFile interactive
+                                    Cmd.io $ runInput rsFile format contextFile outputFile annotationFile
                      , Cmd.description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
