@@ -56,7 +56,7 @@ showArrowReaction (Reaction rcts inh prod) =
 -- using a supplied reaction formatting function.
 annotate :: (Reaction -> Text.Text) -> ReactionSystem -> InteractiveProcess -> Text.Text
 annotate rformat (ReactionSystem _ rs) (InteractiveProcess contexts results) =
-  Text.unlines $ intercalate [""] $ map annotateState $ zip3 [1..] contexts results
+  Text.unlines $ intercalate [""] $ map annotateState $ zip3 [0..] contexts results
   where annotateState (n, ctx, res) =
           let state = (ctx `Set.union` res)
           in [ "STEP " `Text.append` (Text.pack $ show n)
