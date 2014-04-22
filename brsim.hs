@@ -12,15 +12,15 @@ import System.Console.Program
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
 
--- | The possible reaction description formats.
-data ReactionFormat = Plain -- ^ A reaction is given as three lists of symbol names.
-                    | Arrow -- ^ A reaction is given in a notation similar to the chemical one.
+-- The possible reaction description formats.
+data ReactionFormat = Plain -- A reaction is given as three lists of symbol names.
+                    | Arrow -- A reaction is given in a notation similar to the chemical one.
                     deriving (Eq, Ord, Show, Read)
 
--- | Reads the supplied file containing the description of the
--- reaction system and, maybe, the list of contexts.  If a separate
--- context file is specified, the list of context in the reaction
--- system file is ignored.
+-- Reads the supplied file containing the description of the reaction
+-- system and, maybe, the list of contexts.  If a separate context
+-- file is specified, the list of context in the reaction system file
+-- is ignored.
 readInput :: FilePath -> ReactionFormat -> FilePath -> IO (ReactionSystem, [Context])
 readInput rsFile format ctxFile = do
   desc <- TextIO.readFile rsFile
@@ -40,8 +40,8 @@ readInput rsFile format ctxFile = do
 
   return (makeReactionSystem rules, contexts)
 
--- | Runs the simulation of the supplied reaction system with the
--- given context sequence.
+-- Runs the simulation of the supplied reaction system with the given
+-- context sequence.
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
 runInput rsFile format ctxFile outputFile annotationFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
