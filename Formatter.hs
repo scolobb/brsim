@@ -7,6 +7,8 @@ module Formatter ( showSymbol
                  , showSpaceSymbols
                  , showPlusSymbols
                  , showListOfListsOfSymbols
+                 , showPlainReaction
+                 , showArrowReaction
                  ) where
 
 import ReactionSystems
@@ -34,3 +36,15 @@ showPlusSymbols = showSymbols "+"
 -- | Pretty-print a list of lists of symbols.
 showListOfListsOfSymbols :: [Symbols] -> Text.Text
 showListOfListsOfSymbols = Text.unlines . map showSpaceSymbols
+
+-- | Pretty-print a reaction in plain format.
+showPlainReaction :: Reaction -> Text.Text
+showPlainReaction (Reaction rcts inh prod) = Text.intercalate ", " $ map showSpaceSymbols [rcts, inh, prod]
+
+-- | Pretty-print a reaction in arrow format.
+showArrowReaction :: Reaction -> Text.Text
+showArrowReaction (Reaction rcts inh prod) =
+  let txtRcts = showPlusSymbols  rcts
+      txtProd = showPlusSymbols  prod
+      txtInh  = showSpaceSymbols inh
+  in txtRcts `Text.append` "->" `Text.append` txtProd `Text.append` "|" `Text.append` txtInh
