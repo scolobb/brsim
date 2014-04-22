@@ -25,8 +25,7 @@ showSymbol = Text.pack . name
 -- Pretty-print the supplied set of symbol as a list with the given
 -- separator.
 showSymbols :: Text.Text -> Symbols -> Text.Text
-showSymbols _ ss | Set.null ss = "<empty>"
-showSymbols sep ss | otherwise = (Text.intercalate sep . Set.toList . Set.map showSymbol) ss
+showSymbols sep = Text.intercalate sep . Set.toList . Set.map showSymbol
 
 -- | Pretty-print the supplied set of symbol as a space-separated
 -- list.
