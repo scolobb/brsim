@@ -77,9 +77,9 @@ interactiveRun :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath
 interactiveRun rsFile format ctxFile outputFile annotationFile = do
   (rs, contexts) <- readInput rsFile format ctxFile
 
-  let results = reverse $ if contexts /= []
-                          then run rs contexts
-                          else [Set.empty]
+  let results = if contexts /= []
+                then run rs contexts
+                else [Set.empty]
 
   if contexts /= []
     then do
@@ -92,11 +92,14 @@ interactiveRun rsFile format ctxFile outputFile annotationFile = do
     else do
     putStrLn "No context sequence provided, starting from scratch.\n"
 
-  furtherResults <- go rs (head results) (length contexts) []
+  log <- go rs (last results) (length contexts) []
+  let (furtherContexts, furtherResults) = unzip $ reverse log
+      allContexts = contexts ++ furtherContexts
+      allResults  = results  ++ furtherResults
 
-  return ()
+  writeOutput rs (makeInteractiveProcess allContexts allResults) format outputFile annotationFile
 
-  where go :: ReactionSystem -> Result -> Int -> [Result] -> IO [Result]
+  where go :: ReactionSystem -> Result -> Int -> [(Context, Result)] -> IO [(Context, Result)]
         go rs@(ReactionSystem _ reactions) res step acc = do
           putStr "Next context: "
           hFlush stdout
@@ -114,7 +117,7 @@ interactiveRun rsFile format ctxFile outputFile annotationFile = do
             TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols newRes)
             putStrLn ""
 
-            go rs newRes (step + 1) (newRes:acc)
+            go rs newRes (step + 1) ((ctx, newRes):acc)
 
         annotateFunc = case format of
           Plain -> annotateStatePlain
