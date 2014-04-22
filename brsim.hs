@@ -40,6 +40,23 @@ readInput rsFile format ctxFile = do
 
   return (makeReactionSystem rules, contexts)
 
+-- Takes care of outputting the results of a simulation.
+writeOutput :: ReactionSystem -> InteractiveProcess -> ReactionFormat -> FilePath -> FilePath -> IO ()
+writeOutput rs iprocess format outputFile annotationFile = do
+  outputFunc $ showListOfListsOfSymbols $ tail $ results iprocess
+
+  if annotationFile /= ""
+    then TextIO.writeFile annotationFile $ annotateFunc rs iprocess
+    else return ()
+
+  where outputFunc = case outputFile of
+          "" -> TextIO.putStr
+          file -> TextIO.writeFile file
+
+        annotateFunc = case format of
+          Plain -> annotatePlain
+          Arrow -> annotateArrow
+
 -- Runs the simulation of the supplied reaction system with the given
 -- context sequence.
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
@@ -50,19 +67,8 @@ runInput rsFile format ctxFile outputFile annotationFile = do
     else return ()
 
   let res = run rs ctx
-  outputFunc $ showListOfListsOfSymbols res
 
-  if annotationFile /= ""
-    then TextIO.writeFile annotationFile $ annotateFunc rs $ makeInteractiveProcess ctx res
-    else return ()
-
-  where outputFunc = case outputFile of
-          "" -> TextIO.putStr
-          file -> TextIO.writeFile file
-
-        annotateFunc = case format of
-          Plain -> annotatePlain
-          Arrow -> annotateArrow
+  writeOutput rs (makeInteractiveProcess ctx res) format outputFile annotationFile
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
