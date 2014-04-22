@@ -87,22 +87,22 @@ contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
 \    being represented as a list of symbols.\n"
 
 outputFileOpt = Arg.option ['o'] ["output"] (Arg.optional "" Arg.file) ""
-                "\n    The file to write the output to.  If no output file is specified,\n\
-\    the output is written to the standard output.\n"
+                "\n    The file to write the output to.\n\n\
+\    If no output file is specified, the output is written to the standard output.\n"
 
 annotateOpt = Arg.option ['a'] ["annotate"] (Arg.optional "" Arg.file) ""
-                "\n    The file to write annotated output to.  If this option is\n\
-\    specified, the simulator will write a detailed description of the activity of the\n\
-\    system during the simulation.  For each step, it will write the context, the\n\
-\    latest result, the current state, and the enabled rules.\n"
+                "\n    The file to write annotated output to.\n\n\
+\    If this option is specified, the simulator will write a detailed description of\n\
+\    the activity of the system during the simulation.  For each step, it will write\n\
+\    the context, the latest result, the current state, and the enabled rules.\n"
 
 interactiveOpt = Arg.option ['i'] ["interact"] (Arg.optional False Arg.boolean) False
-                 "\n    Start an interactive simulation session.  If this option is\n\
-\    specified, the simulator will explicitly ask the user for contexts and will\n\
-\    print out the next state interactively.  If an output file is specified via\n\
-\    --output, the whole result sequence will be written to the output file.  In\n\
-\    a similar way, if an annotation file is specified, the annotated description of\n\
-\    the interactive process will be produced."
+                 "\n    Start an interactive simulation session.\n\n\
+\    If this option is specified, the simulator will explicitly ask the user for\n\
+\    contexts and will print out the next state interactively.  If an output file is\n\
+\    specified via --output, the whole result sequence will be written to the output\n\
+\    file.  In a similar way, if an annotation file is specified, the annotated\n\
+\    description of the interactive process will be produced."
 
 runCmd = Cmd.Command { Cmd.name = "run"
                      , Cmd.action = Cmd.withNonOption Arg.file $
