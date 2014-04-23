@@ -9,6 +9,8 @@ result, the full state, as well as the enabled rules.  `brsim` also
 offers an interactive mode in which the contexts is to be provided by
 the user.
 
+`brsim` is distributed under the terms of GNU GPLv3 license.
+
 # Reaction Systems
 
 Reaction systems were originally introduced as a formal framework for
