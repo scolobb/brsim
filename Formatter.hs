@@ -24,10 +24,15 @@ import Data.List (intercalate)
 showSymbol :: Symbol -> Text.Text
 showSymbol = Text.pack . name
 
+-- Replaces empty text with a full-stop.
+handleEmpty :: Text.Text -> Text.Text
+handleEmpty t | Text.null t = "."
+handleEmpty t | otherwise = t
+
 -- Pretty-print the supplied set of symbol as a list with the given
 -- separator.
 showSymbols :: Text.Text -> Symbols -> Text.Text
-showSymbols sep = Text.intercalate sep . Set.toList . Set.map showSymbol
+showSymbols sep = handleEmpty . Text.intercalate sep . Set.toList . Set.map showSymbol
 
 -- | Pretty-print the supplied set of symbol as a space-separated
 -- list.
