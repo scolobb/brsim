@@ -9,6 +9,7 @@ import Formatter
 import qualified System.Console.Argument as Arg
 import qualified System.Console.Command as Cmd
 import System.Console.Program
+import System.Console.Readline (readline)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
 import qualified Data.Set as Set
@@ -105,23 +106,22 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
 
   where go :: ReactionSystem -> Result -> Int -> [(Context, Result)] -> IO [(Context, Result)]
         go rs@(ReactionSystem _ reactions) res step acc = do
-          putStr "Next context: "
-          hFlush stdout
-          ln <- TextIO.getLine
+          maybeLn <- readline "Next context: "
           putStrLn ""
 
-          if ln == "STOP"
-            then return acc
-            else do
-            let ctx = readSpaceSymbols ln
-                state = ctx `Set.union` res
-                newRes = apply reactions state
+          case maybeLn of
+            Nothing     -> return acc -- EOF
+            Just "STOP" -> return acc
+            Just ln -> do
+              let ctx = readSpaceSymbols $ Text.pack ln
+                  state = ctx `Set.union` res
+                  newRes = apply reactions state
 
-            TextIO.putStr $ annotateFunc rs step ctx res
-            TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols newRes)
-            putStrLn ""
+              TextIO.putStr $ annotateFunc rs step ctx res
+              TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols newRes)
+              putStrLn ""
 
-            go rs newRes (step + 1) ((ctx, newRes):acc)
+              go rs newRes (step + 1) ((ctx, newRes):acc)
 
         annotateFunc = case format of
           Plain -> annotateStatePlain
