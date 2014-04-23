@@ -77,7 +77,7 @@ applyOne a@(Reaction _ _ p) ss | enabled a ss = p
 applyOne _ _ | otherwise = Set.empty
 
 apply :: Reactions -> Symbols -> Symbols
-apply as ss = foldMap ((flip $ applyOne) ss) as
+apply as ss = foldMap ((flip applyOne) ss) as
 
 res = apply
 
