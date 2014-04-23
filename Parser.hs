@@ -22,10 +22,15 @@ import qualified Data.Set as Set
 stripFilter :: [Text.Text] -> [Text.Text]
 stripFilter = filter (not . Text.null) . map Text.strip
 
+-- Removes symbols with dots as their names.  Such symbols stand for
+-- the empty set.
+dropEmpty :: [Symbol] -> [Symbol]
+dropEmpty = filter ((/=) "." . name)
+
 -- | Parses a list of symbols (second argument) separated by the given
 -- sequence of symbols (first argument).
 readSymbols :: Text.Text -> Text.Text -> Symbols
-readSymbols sep = Set.fromList . map (Symbol . Text.unpack) . stripFilter . Text.splitOn sep
+readSymbols sep = Set.fromList . dropEmpty . map (Symbol . Text.unpack) . stripFilter . Text.splitOn sep
 
 -- | Parses a plus-separated list of symbols.
 readPlusSymbols = readSymbols "+"
