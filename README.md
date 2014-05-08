@@ -7,7 +7,8 @@ required, an annotated description of the obtained interactive
 process, which includes listing, for each step, the context, the
 result, the full state, as well as the enabled rules.  `brsim` also
 offers an interactive mode in which the contexts is to be provided by
-the user.
+the user.  Finally, `brsim` can be used to list all the sets which are
+conserved in a reaction system.
 
 `brsim` is distributed under the terms of GNU GPLv3 license.
 
@@ -249,6 +250,20 @@ An option specific of the interactive mode is `--output-context`,
 which is used to specify the file into which `brsim` will write the
 *context sequence*, so that you can keep a full record of your actions
 in an interactive session.
+
+# Listing Conserved Set
+
+`brsim` is also capable of listing the sets which are conserved by a
+given reaction system.  To achieve that goal, it should be invoked in
+the following way:
+
+```
+brsim list conserved-sets [FILE]
+```
+
+The input file need only contain the definition of the reaction system
+you want to list the conserved sets for; any context definitions will
+be just ignored.
 
 # Getting Help
 
