@@ -22,3 +22,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
 module Properties () where
+
+import ReactionSystems
+import qualified Data.Set as Set
+import Data.List (subsequences)
+
+subsets :: Ord a =>  Set.Set a -> [Set.Set a]
+subsets = map Set.fromAscList . subsequences . Set.toAscList
+
+intersects :: Ord a =>  Set.Set a -> Set.Set a -> Bool
+a `intersects` b = not $ Set.null $ a `Set.intersection` b
+
+conserved :: ReactionSystem -> Symbols -> Bool
+conserved (ReactionSystem u rs) m =
+  all (\sub -> let ressubs = apply rs sub
+               in m `intersects` sub == m `intersects` ressubs
+      ) $ subsets u
+
+listConservedSets :: ReactionSystem -> [Symbols]
+listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ subsets u
