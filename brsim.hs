@@ -62,20 +62,21 @@ readInput rsFile format ctxFile = do
 
   return (makeReactionSystem rules, contexts)
 
+outputFunc :: FilePath -> (Text.Text -> IO ())
+outputFunc outputFile  = case outputFile of
+  "" -> TextIO.putStr
+  file -> TextIO.writeFile file
+
 -- Takes care of outputting the results of a simulation.
 writeOutput :: ReactionSystem -> InteractiveProcess -> ReactionFormat -> FilePath -> FilePath -> IO ()
 writeOutput rs iprocess format outputFile annotationFile = do
-  outputFunc $ showListOfListsOfSymbols $ tail $ results iprocess
+  outputFunc outputFile $ showListOfListsOfSymbols $ tail $ results iprocess
 
   if annotationFile /= ""
     then TextIO.writeFile annotationFile $ annotateFunc rs iprocess
     else return ()
 
-  where outputFunc = case outputFile of
-          "" -> TextIO.putStr
-          file -> TextIO.writeFile file
-
-        annotateFunc = case format of
+  where annotateFunc = case format of
           Plain -> annotatePlain
           Arrow -> annotateArrow
 
