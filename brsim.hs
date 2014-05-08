@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import ReactionSystems
 import Parser
 import Formatter
+import Properties
 import qualified System.Console.Argument as Arg
 import qualified System.Console.Command as Cmd
 import System.Console.Program
@@ -149,7 +150,9 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
 
 -- Lists all the sets that are conserved in a given reaction system.
 doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
-doListConservedSets rsFile format outputFile = return ()
+doListConservedSets rsFile format outputFile = do
+    (rs, _) <- readInput rsFile format ""
+    outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
