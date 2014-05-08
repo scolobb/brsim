@@ -29,6 +29,7 @@ import ReactionSystems
 import qualified Data.Set as Set
 import Data.List (subsequences)
 
+-- Since we use 'Set.toAscList', the empty set always comes first.
 subsets :: Ord a =>  Set.Set a -> [Set.Set a]
 subsets = map Set.fromAscList . subsequences . Set.toAscList
 
@@ -42,4 +43,4 @@ conserved (ReactionSystem u rs) m =
       ) $ subsets u
 
 listConservedSets :: ReactionSystem -> [Symbols]
-listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ subsets u
+listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ tail $ subsets u
