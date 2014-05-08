@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -}
 
-module Properties () where
+module Properties ( conserved
+                  , listConservedSets
+                  ) where
 
 import ReactionSystems
 import qualified Data.Set as Set
