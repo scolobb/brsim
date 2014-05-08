@@ -146,6 +146,10 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
           Plain -> annotateStatePlain
           Arrow -> annotateStateArrow
 
+-- Lists all the sets that are conserved in a given reaction system.
+doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
+doListConservedSets rsFile format outputFile = return ()
+
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
                                "arrow" -> Right $ Arrow
@@ -235,6 +239,25 @@ interactCmd = Cmd.Command { Cmd.name = "interact"
 \the given context sequence and will start the interactive session at the last state.\n"
                           }
 
+listCmd = Cmd.Command { Cmd.name = "list"
+                      , Cmd.action = Cmd.io $ do
+                        putStrLn "ERROR: Don't know what to list.  Showing usage information.\n"
+                        showUsage brsimCommands
+                      , Cmd.description = "List all the sets satisfying a certain property."
+                      }
+conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
+                               , Cmd.action = Cmd.withNonOption Arg.file $
+                                              \rsFile ->
+                                              Cmd.withOption reactionFormatOpt $
+                                              \format ->
+                                              Cmd.withOption outputFileOpt $
+                                              \outputFile ->
+                                              Cmd.io $ doListConservedSets rsFile format outputFile
+                               , Cmd.description = "Lists all sets which are conserved in \
+\the reaction system described in FILE.\n\n\
+\The set of species is derived from the set of species used in the rules.\n"
+                               }
+
 help = Cmd.Command { Cmd.name = "help"
                    , Cmd.action = Cmd.io $ showUsage brsimCommands
                    , Cmd.description = "Show this usage information."
@@ -248,7 +271,11 @@ brsimCommand = Cmd.Command { Cmd.name = "brsim"
                            }
 
 brsimCommands :: Cmd.Commands
-brsimCommands = Cmd.Node brsimCommand [Cmd.Node runCmd [], Cmd.Node interactCmd [], Cmd.Node help []]
+brsimCommands = Cmd.Node brsimCommand [ Cmd.Node runCmd []
+                                      , Cmd.Node interactCmd []
+                                      , Cmd.Node listCmd [ Cmd.Node conservedSetsCmd [] ]
+                                      , Cmd.Node help []
+                                      ]
 
 main :: IO ()
 main = single brsimCommands
