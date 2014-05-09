@@ -40,7 +40,7 @@ data ReactionFormat = Plain -- A reaction is given as three lists of symbol name
                     | Arrow -- A reaction is given in a notation similar to the chemical one.
                     deriving (Eq, Ord, Show, Read)
 
--- Reads the supplied file containing the description of the reaction
+-- | Reads the supplied file containing the description of the reaction
 -- system and, maybe, the list of contexts.  If a separate context
 -- file is specified, the list of context in the reaction system file
 -- is ignored.
@@ -68,7 +68,7 @@ outputFunc outputFile  = case outputFile of
   "" -> TextIO.putStr
   file -> TextIO.writeFile file
 
--- Takes care of outputting the results of a simulation.
+-- | Takes care of outputting the results of a simulation.
 writeOutput :: ReactionSystem -> InteractiveProcess -> ReactionFormat -> FilePath -> FilePath -> IO ()
 writeOutput rs iprocess format outputFile annotationFile = do
   outputFunc outputFile $ showListOfListsOfSymbols $ tail $ results iprocess
@@ -81,7 +81,7 @@ writeOutput rs iprocess format outputFile annotationFile = do
           Plain -> annotatePlain
           Arrow -> annotateArrow
 
--- Runs the simulation of the supplied reaction system with the given
+-- | Runs the simulation of the supplied reaction system with the given
 -- context sequence.
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
 runInput rsFile format ctxFile outputFile annotationFile = do
@@ -94,7 +94,7 @@ runInput rsFile format ctxFile outputFile annotationFile = do
 
   writeOutput rs (makeInteractiveProcess ctx res) format outputFile annotationFile
 
--- Runs an interactive simulation of the supplied reaction system.
+-- | Runs an interactive simulation of the supplied reaction system.
 interactiveRun :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> FilePath -> IO ()
 interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = do
   (rs, contexts) <- readInput rsFile format ctxFile
@@ -148,7 +148,7 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
           Plain -> annotateStatePlain
           Arrow -> annotateStateArrow
 
--- Lists all the sets that are conserved in a given reaction system.
+-- | Lists all the sets that are conserved in a given reaction system.
 doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
 doListConservedSets rsFile format outputFile = do
     (rs, _) <- readInput rsFile format ""
