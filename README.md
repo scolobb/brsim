@@ -12,7 +12,7 @@ conserved in a reaction system.
 
 `brsim` is distributed under the terms of GNU GPLv3 license.
 
-# Reaction Systems
+## Reaction Systems
 
 Reaction systems were originally introduced as a formal framework for
 investigating processes carried out by biological reactions [0].
@@ -46,7 +46,7 @@ influences (often considerably) the evolution of the system.
 For a formal introduction and overview of the reaction systems, the
 reader is referred to [0].
 
-# Specifying the Input
+## Specifying the Input
 
 The most important thing `brsim` needs to have in its input is the
 description of the reaction system it is required to simulate.  This
@@ -100,7 +100,7 @@ empty set can be used:
 a b, . , c d
 ```
 
-# Batch Mode
+## Batch Mode
 
 In batch mode, `brsim` should be invoked in the following way:
 
@@ -215,7 +215,7 @@ a b
 a c d
 ```
 
-# Interactive Mode
+## Interactive Mode
 
 In interactive `brsim` will ask you for contexts at every new step of
 the simulation.  Thus it is not necessary to specify any context
@@ -251,7 +251,7 @@ which is used to specify the file into which `brsim` will write the
 *context sequence*, so that you can keep a full record of your actions
 in an interactive session.
 
-# Listing Conserved Set
+## Listing Conserved Set
 
 `brsim` is also capable of listing the sets which are conserved by a
 given reaction system.  To achieve that goal, it should be invoked in
@@ -265,7 +265,7 @@ The input file need only contain the definition of the reaction system
 you want to list the conserved sets for; any context definitions will
 be just ignored.
 
-# Getting Help
+## Getting Help
 
 If you type `brsim help`, you will get a more or less detailed
 explanation of the commands and options `brsim` takes.  If your
@@ -273,7 +273,7 @@ question is not covered by the present `README` or `brsim help`, feel
 free to read the code directly or contact me at `sergiu` dot `ivanov`
 at something like `u-pec.fr`.
 
-# References
+## References
 
 [0] Robert Brijder, Andrzej Ehrenfeucht, Michael G. Main, Grzegorz
 Rozenberg.  *A Tour of Reaction Systems*.
