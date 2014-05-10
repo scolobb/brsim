@@ -251,7 +251,7 @@ which is used to specify the file into which `brsim` will write the
 *context sequence*, so that you can keep a full record of your actions
 in an interactive session.
 
-## Listing Conserved Set
+## Listing Conserved Sets
 
 `brsim` is also capable of listing the sets which are conserved by a
 given reaction system.  To achieve that goal, it should be invoked in
