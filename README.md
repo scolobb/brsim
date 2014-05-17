@@ -273,6 +273,14 @@ question is not covered by the present `README` or `brsim help`, feel
 free to read the code directly or contact me at `sergiu` dot `ivanov`
 at something like `u-pec.fr`.
 
+## Web Interface
+
+It is also possible to use the simulator
+[online](http://combio.abo.fi/research/reaction-systems/reaction-system-simulator/)
+on the Web page of the [Combio laboratory](http://combio.abo.fi) at
+the Åbo Akademi University.  This page also lists further examples of
+reaction systems.
+
 ## References
 
 [0] Robert Brijder, Andrzej Ehrenfeucht, Michael G. Main, Grzegorz
