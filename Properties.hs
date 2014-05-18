@@ -87,5 +87,12 @@ breakOnEmptySet (BehaviourGraph gr sarr smap) =
       ([emptySetCmp], other) = partition (emptySet `elem`) $ flattenedComponents gr
   in (emptySetCmp, other)
 
+-- Finds all singleton sets which are associated with a vertex in a
+-- given list of them.  Then puts all those sets together.
+singletons :: BehaviourGraph -> [Vertex] -> Symbols
+singletons (BehaviourGraph _ sarr _) =
+  Set.unions . map (\v -> let ss = sarr Array.! v
+                          in if Set.size ss == 1 then ss else Set.empty)
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ tail $ subsets u
