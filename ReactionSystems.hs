@@ -33,6 +33,7 @@ module ReactionSystems ( Symbol(..)
                        , applyOne
                        , apply
                        , res
+                       , applyRS
                        , Context
                        , State
                        , Result
@@ -85,6 +86,9 @@ apply :: Reactions -> Symbols -> Symbols
 apply as ss = foldMap ((flip applyOne) ss) as
 
 res = apply
+
+applyRS :: ReactionSystem -> Symbols -> Symbols
+applyRS (ReactionSystem _ rs) = apply rs
 
 type Context = Symbols
 type State   = Symbols
