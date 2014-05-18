@@ -31,7 +31,8 @@ import qualified Data.Set as Set
 import qualified Data.Map as Map
 import qualified Data.Array as Array
 import Data.Graph
-import Data.List (subsequences)
+import Data.Tree
+import Data.List (subsequences, partition)
 import Data.Tuple (swap)
 
 -- Since we use 'Set.toAscList', the empty set always comes first.
@@ -73,6 +74,18 @@ buildBehaviourGraph rs =
       edges = map (\(i, subs) -> (i, smap Map.! (applyRS rs subs) )) $ Array.assocs sarr
       gr = buildG (Array.bounds sarr) edges
   in BehaviourGraph gr sarr smap
+
+flattenedComponents :: Graph -> [[Vertex]]
+flattenedComponents = map flatten . components
+
+-- In the given behaviour graph, finds the connected component of the
+-- empty set and returns it and the list of the other connected
+-- components.
+breakOnEmptySet :: BehaviourGraph -> ([Vertex], [[Vertex]])
+breakOnEmptySet (BehaviourGraph gr sarr smap) =
+  let emptySet = smap Map.! Set.empty
+      ([emptySetCmp], other) = partition (emptySet `elem`) $ flattenedComponents gr
+  in (emptySetCmp, other)
 
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ tail $ subsets u
