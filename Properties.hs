@@ -39,7 +39,7 @@ a `intersects` b = not $ Set.null $ a `Set.intersection` b
 conserved :: ReactionSystem -> Symbols -> Bool
 conserved sys@(ReactionSystem _ rs) m =
   all (\sub -> let ressubs = apply rs sub
-               in (Set.null ressubs) || (m `intersects` sub == m `intersects` ressubs)
+               in m `intersects` sub == m `intersects` ressubs
       ) $ subsets $ support sys
 
 listConservedSets :: ReactionSystem -> [Symbols]
