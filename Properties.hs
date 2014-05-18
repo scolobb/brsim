@@ -37,10 +37,10 @@ intersects :: Ord a =>  Set.Set a -> Set.Set a -> Bool
 a `intersects` b = not $ Set.null $ a `Set.intersection` b
 
 conserved :: ReactionSystem -> Symbols -> Bool
-conserved (ReactionSystem u rs) m =
+conserved sys@(ReactionSystem _ rs) m =
   all (\sub -> let ressubs = apply rs sub
                in (Set.null ressubs) || (m `intersects` sub == m `intersects` ressubs)
-      ) $ subsets u
+      ) $ subsets $ support sys
 
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ tail $ subsets u
