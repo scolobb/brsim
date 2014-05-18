@@ -151,8 +151,8 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
 -- | Lists all the sets that are conserved in a given reaction system.
 doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
 doListConservedSets rsFile format outputFile = do
-    (rs, _) <- readInput rsFile format ""
-    outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
+  (rs, _) <- readInput rsFile format ""
+  outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right $ Plain
