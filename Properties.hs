@@ -84,12 +84,13 @@ flattenedComponents = map flatten . components
 -- components which do not contain any of the supplied sets.
 assignComponents :: BehaviourGraph -> [[Vertex]] -> [Symbols] -> (Map.Map Symbols [Vertex], [[Vertex]])
 assignComponents (BehaviourGraph gr sarr _) cmps subsets =
-  foldl (\(resMap, unassigned) cmp -> let cmpSets = map (sarr Array.!) cmp
-                                          contained = filter (`elem` cmpSets) subsets
-                                      in if contained == []
-                                         then (resMap, cmp:unassigned)
-                                         else ( Map.union resMap $ Map.fromList $ zip contained $ repeat cmp
-                                              , unassigned )
+  foldl (\(resMap, unassigned) cmp ->
+          let cmpSets = map (sarr Array.!) cmp
+              contained = filter (`elem` cmpSets) subsets
+          in if null contained
+             then (resMap, cmp:unassigned)
+             else ( Map.union resMap $ Map.fromList $ zip contained $ repeat cmp
+                  , unassigned )
         ) (Map.empty, []) cmps
 
 -- Finds all singleton sets which are associated with a vertex in a
