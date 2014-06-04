@@ -110,6 +110,11 @@ intersectionKind ss m = case partition (m `intersects`) ss of
   ([], _) -> DisjointAll
   _       -> Mixed
 
+-- Determines in which kind of intersection relation a set of symbols
+-- is with the given connected component of a behaviour graph.
+componentIntersectionKind :: BehaviourGraph -> [Vertex] -> Symbols -> IntersectionKind
+componentIntersectionKind (BehaviourGraph _ sarr _) cmp = intersectionKind (map (sarr Array.!) cmp)
+
 -- Finds all singleton sets which are associated with a vertex in a
 -- given list of them.  Then puts all those sets together.
 singletons :: BehaviourGraph -> [Vertex] -> Symbols
