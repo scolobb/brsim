@@ -78,14 +78,19 @@ buildBehaviourGraph rs =
 flattenedComponents :: Graph -> [[Vertex]]
 flattenedComponents = map flatten . components
 
--- In the given behaviour graph, finds the connected component of the
--- empty set and returns it and the list of the other connected
--- components.
-breakOnEmptySet :: BehaviourGraph -> ([Vertex], [[Vertex]])
-breakOnEmptySet (BehaviourGraph gr sarr smap) =
-  let emptySet = smap Map.! Set.empty
-      ([emptySetCmp], other) = partition (emptySet `elem`) $ flattenedComponents gr
-  in (emptySetCmp, other)
+-- For a given behaviour graph and a list of subsets, builds the map
+-- assigning to the subsets the component containing it.  The function
+-- also returns a list of the components which do not contain any of
+-- the supplied sets.
+assignComponents :: BehaviourGraph -> [Symbols] -> (Map.Map Symbols [Vertex], [[Vertex]])
+assignComponents (BehaviourGraph gr sarr _) subsets =
+  foldl (\(resMap, unassigned) cmp -> let cmpSets = map (sarr Array.!) cmp
+                                          contained = filter (`elem` cmpSets) subsets
+                                      in if contained == []
+                                         then (resMap, cmp:unassigned)
+                                         else ( Map.union resMap $ Map.fromList $ zip contained $ repeat cmp
+                                              , unassigned )
+        ) (Map.empty, []) $ flattenedComponents gr
 
 -- Finds all singleton sets which are associated with a vertex in a
 -- given list of them.  Then puts all those sets together.
