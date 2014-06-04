@@ -57,7 +57,7 @@ data BehaviourGraph = BehaviourGraph { behaviourGraph :: Graph
                                      } deriving (Show, Read, Eq)
 
 buildSubsetArray :: Symbols -> SubsetArray
-buildSubsetArray ss = Array.listArray (1, 2^(Set.size ss)) $ subsets ss
+buildSubsetArray ss = Array.listArray (1, 2^Set.size ss ) $ subsets ss
 
 buildSubsetMap :: SubsetArray -> SubsetMap
 buildSubsetMap = Map.fromList . map swap . Array.assocs
@@ -71,7 +71,7 @@ buildBehaviourGraph rs =
       smap = buildSubsetMap sarr
       -- By definition, we don't get out of the
       -- support set when we apply some reactions.
-      edges = map (\(i, subs) -> (i, smap Map.! (applyRS rs subs) )) $ Array.assocs sarr
+      edges = map (\(i, subs) -> (i, smap Map.!  applyRS rs subs  )) $ Array.assocs sarr
       gr = buildG (Array.bounds sarr) edges
   in BehaviourGraph gr sarr smap
 
