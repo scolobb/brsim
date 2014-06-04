@@ -93,6 +93,23 @@ assignComponents (BehaviourGraph gr sarr _) cmps subsets =
                   , unassigned )
         ) (Map.empty, []) cmps
 
+-- Describes the relationship a set may be in with a set of sets: it
+-- either intersects all of them, is disjoint from all of them, or
+-- intersects some of them and is disjoint from some other of them.
+data IntersectionKind = IntersectsAll | DisjointAll | Mixed
+                      deriving (Show, Read, Eq, Ord)
+
+-- Determines in which kind of intersection relation a set is with
+-- respect to a given list of sets.
+--
+-- If the list of sets is empty, the behaviour of the function is
+-- undefined.
+intersectionKind :: Ord a => Set.Set a -> [Set.Set a] -> IntersectionKind
+intersectionKind m ss = case partition (m `intersects`) ss of
+  (_, []) -> IntersectsAll
+  ([], _) -> DisjointAll
+  _       -> Mixed
+
 -- Finds all singleton sets which are associated with a vertex in a
 -- given list of them.  Then puts all those sets together.
 singletons :: BehaviourGraph -> [Vertex] -> Symbols
