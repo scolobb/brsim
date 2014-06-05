@@ -35,6 +35,7 @@ import Data.Graph
 import Data.Tree
 import Data.List (subsequences, partition)
 import Data.Tuple (swap)
+import qualified Data.IntMap as IntMap
 
 -- Since we use 'Set.toAscList', the empty set always comes first.
 subsets :: Ord a =>  Set.Set a -> [Set.Set a]
@@ -134,6 +135,29 @@ singletons (BehaviourGraph _ sarr _) =
 -- Lists the source vertices of a given (directed) graph.
 sources :: Graph -> [Vertex]
 sources gr = [ v | (v, deg) <- Array.assocs $ indegree gr, deg == 0 ]
+
+-- Builds the subgraph induced by the given vertices and also returns
+-- a mapping of the indices of the vertex numbers of the subgraph to
+-- the vertex numbers of the original graph.
+subgraph :: Graph -> [Vertex] -> (Graph, IntMap.IntMap Vertex)
+subgraph gr vs =
+  let vsMap = IntMap.fromList $ zip vs [1..]
+
+      remapEdge (v, w) = do
+        v' <- IntMap.lookup v vsMap
+        w' <- IntMap.lookup w vsMap
+        return (v', w')
+
+      newEdges = do
+        e <- edges gr
+        case remapEdge e of
+          Just (v, w) -> [(v, w)]
+          Nothing     -> []
+
+      newGr = buildG (1, IntMap.size vsMap) newEdges
+      resMap = IntMap.fromList $ map swap $ IntMap.assocs vsMap
+
+  in (newGr, resMap)
 
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
