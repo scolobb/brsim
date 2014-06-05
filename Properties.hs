@@ -159,6 +159,11 @@ subgraph gr vs =
 
   in (newGr, resMap)
 
+-- Lists the descendants of a vertex in the graph.  Vertex 'w' is a
+-- descendant of 'v' if 'w' is reachable from 'v'.
+descendants :: Graph -> Vertex -> [Vertex]
+descendants gr v = flatten $ head $ dfs gr [v]
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
