@@ -131,6 +131,10 @@ singletons (BehaviourGraph _ sarr _) =
   Set.unions . map (\v -> let ss = sarr Array.! v
                           in if Set.size ss == 1 then ss else Set.empty)
 
+-- Lists the source vertices of a given (directed) graph.
+sources :: Graph -> [Vertex]
+sources gr = [ v | (v, deg) <- Array.assocs $ indegree gr, deg == 0 ]
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
