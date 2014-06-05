@@ -33,7 +33,7 @@ import qualified Data.Map as Map
 import qualified Data.Array as Array
 import Data.Graph
 import Data.Tree
-import Data.List (subsequences, partition)
+import Data.List (subsequences, partition, (\\))
 import Data.Tuple (swap)
 import qualified Data.IntMap as IntMap
 
@@ -163,6 +163,22 @@ subgraph gr vs =
 -- descendant of 'v' if 'w' is reachable from 'v'.
 descendants :: Graph -> Vertex -> [Vertex]
 descendants gr v = flatten $ head $ dfs gr [v]
+
+-- Computes the source sets of the given DAG.  The behaviour of this
+-- function is undefined when the graph is not a DAG.
+sourceSetsDAG :: Graph -> [[Vertex]]
+sourceSetsDAG gr = case vertices gr of
+  []  -> []
+  [v] -> [[], [v]]
+  vs  -> let s = head $ sources gr
+             t = descendants gr s
+
+             (gplus,  plusMap ) = subgraph gr $ vs \\ [s]
+             (gminus, minusMap) = subgraph gr $ vs \\ t
+
+             gplusSrc  = map (map (plusMap  IntMap.!)) $ sourceSetsDAG gplus
+             gminusSrc = map (map (minusMap IntMap.!)) $ sourceSetsDAG gminus
+         in [[]] ++ gminusSrc ++ [ s:src | src <- gplusSrc ]
 
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
