@@ -131,4 +131,7 @@ singletons (BehaviourGraph _ sarr _) =
                           in if Set.size ss == 1 then ss else Set.empty)
 
 listConservedSets :: ReactionSystem -> [Symbols]
-listConservedSets rs@(ReactionSystem u _) = filter (conserved rs) $ tail $ subsets u
+listConservedSets rs =
+  let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
+      cmps = flattenedComponents gr
+  in [ m | m <- subsets $ support rs, conservedInGraph bhg cmps m ]
