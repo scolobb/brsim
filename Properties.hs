@@ -115,6 +115,14 @@ intersectionKind ss m = case partition (m `intersects`) ss of
 componentIntersectionKind :: BehaviourGraph -> [Vertex] -> Symbols -> IntersectionKind
 componentIntersectionKind (BehaviourGraph _ sarr _) cmp = intersectionKind (map (sarr Array.!) cmp)
 
+-- Checks if a set is conserved in the given components of the
+-- behaviour graph.
+conservedInGraph :: BehaviourGraph -> [[Vertex]] -> Symbols -> Bool
+conservedInGraph gr cmps m = all (`elem` [IntersectsAll, DisjointAll])
+                             $ map (componentIntersectionKind' m gr)
+                             cmps
+  where componentIntersectionKind' ss g cmp = componentIntersectionKind g cmp ss
+
 -- Finds all singleton sets which are associated with a vertex in a
 -- given list of them.  Then puts all those sets together.
 singletons :: BehaviourGraph -> [Vertex] -> Symbols
