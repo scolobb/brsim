@@ -185,6 +185,25 @@ infixr 8 ><
 (><) :: (a -> b) -> (c -> d) -> (a, c) -> (b, d)
 (f >< g) (x,y) = (f x,g y)
 
+-- For the given graph, computes the DAG of its strongly connected
+-- components and returns the mapping of the numbers of vertices in
+-- the new graph to the strongly connected components.
+sccDAG :: Graph -> (Graph, IntMap.IntMap [Vertex])
+sccDAG gr =
+  let sccs = map flatten $ scc gr
+      sccsMap = zip [1..] sccs
+      resMap = IntMap.fromList sccsMap
+
+      -- Map vertices to the indices of the connected components that
+      -- contain them.
+      vMap = IntMap.fromList $ do
+        (idx, scc) <- sccsMap
+        zip scc $ repeat idx
+
+      dagEdges = map ( (vMap IntMap.!) >< (vMap IntMap.!) ) $ edges gr
+      dag = buildG (1, IntMap.size resMap) dagEdges
+  in (dag, resMap)
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
