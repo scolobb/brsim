@@ -180,6 +180,11 @@ sourceSetsDAG gr = case vertices gr of
              gminusSrc = map (map (minusMap IntMap.!)) $ sourceSetsDAG gminus
          in [[]] ++ gminusSrc ++ [ s:src | src <- gplusSrc ]
 
+-- Taken from http://hackage.haskell.org/package/fgl-5.5.0.1/docs/Data-Graph-Inductive-Query-Monad.html .
+infixr 8 ><
+(><) :: (a -> b) -> (c -> d) -> (a, c) -> (b, d)
+(f >< g) (x,y) = (f x,g y)
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
