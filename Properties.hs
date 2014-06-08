@@ -80,21 +80,6 @@ buildBehaviourGraph rs =
 flattenedComponents :: Graph -> [[Vertex]]
 flattenedComponents = map flatten . components
 
--- For a given behaviour graph, a list of its connected components,
--- and a list of subsets, builds the map assigning to the subsets the
--- component containing it.  The function also returns a list of the
--- components which do not contain any of the supplied sets.
-assignComponents :: BehaviourGraph -> [[Vertex]] -> [Symbols] -> (Map.Map Symbols [Vertex], [[Vertex]])
-assignComponents (BehaviourGraph gr sarr _) cmps subsets =
-  foldl (\(resMap, unassigned) cmp ->
-          let cmpSets = map (sarr Array.!) cmp
-              contained = filter (`elem` cmpSets) subsets
-          in if null contained
-             then (resMap, cmp:unassigned)
-             else ( Map.union resMap $ Map.fromList $ zip contained $ repeat cmp
-                  , unassigned )
-        ) (Map.empty, []) cmps
-
 -- Describes the relationship a set may be in with a set of sets: it
 -- either intersects all of them, is disjoint from all of them, or
 -- intersects some of them and is disjoint from some other of them.
