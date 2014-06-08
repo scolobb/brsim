@@ -22,7 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
 module Properties ( conserved
-                  , BehaviourGraph(..)
+                  , LabelledGraph(..)
+                  , BehaviourGraph
                   , buildBehaviourGraph
                   , listConservedSets
                   ) where
@@ -50,13 +51,12 @@ conserved sys@(ReactionSystem _ rs) m =
                in m `intersects` sub == m `intersects` ressubs
       ) $ subsets $ support sys
 
+data LabelledGraph a = LabelledGraph Graph (Array.Array Vertex a) (Map.Map a Vertex)
+
+type BehaviourGraph = LabelledGraph Symbols
+
 type SubsetArray = Array.Array Int Symbols
 type SubsetMap = Map.Map Symbols Int
-
-data BehaviourGraph = BehaviourGraph { behaviourGraph :: Graph
-                                     , subsetArray    :: SubsetArray
-                                     , subsetMap      :: SubsetMap
-                                     } deriving (Show, Read, Eq)
 
 buildSubsetArray :: Symbols -> SubsetArray
 buildSubsetArray ss = Array.listArray (1, 2^Set.size ss ) $ subsets ss
@@ -75,7 +75,7 @@ buildBehaviourGraph rs =
       -- support set when we apply some reactions.
       edges = map (\(i, subs) -> (i, smap Map.!  applyRS rs subs  )) $ Array.assocs sarr
       gr = buildG (Array.bounds sarr) edges
-  in BehaviourGraph gr sarr smap
+  in LabelledGraph gr sarr smap
 
 flattenedComponents :: Graph -> [[Vertex]]
 flattenedComponents = map flatten . components
@@ -100,7 +100,7 @@ intersectionKind ss m = case partition (m `intersects`) ss of
 -- Determines in which kind of intersection relation a set of symbols
 -- is with the given connected component of a behaviour graph.
 componentIntersectionKind :: BehaviourGraph -> [Vertex] -> Symbols -> IntersectionKind
-componentIntersectionKind (BehaviourGraph _ sarr _) cmp = intersectionKind (map (sarr Array.!) cmp)
+componentIntersectionKind (LabelledGraph _ sarr _) cmp = intersectionKind (map (sarr Array.!) cmp)
 
 -- Checks if a set is conserved in the given components of the
 -- behaviour graph.
@@ -113,7 +113,7 @@ conservedInGraph gr cmps m = all (`elem` [IntersectsAll, DisjointAll])
 -- Finds all singleton sets which are associated with a vertex in a
 -- given list of them.  Then puts all those sets together.
 singletons :: BehaviourGraph -> [Vertex] -> Symbols
-singletons (BehaviourGraph _ sarr _) =
+singletons (LabelledGraph _ sarr _) =
   Set.unions . map (\v -> let ss = sarr Array.! v
                           in if Set.size ss == 1 then ss else Set.empty)
 
@@ -190,10 +190,10 @@ sccDAG gr =
   in (dag, resMap)
 
 sets :: BehaviourGraph -> [Vertex] -> [Symbols]
-sets (BehaviourGraph _ sarr _) = map (sarr Array.!)
+sets (LabelledGraph _ sarr _) = map (sarr Array.!)
 
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
-  let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
+  let bhg@(LabelledGraph gr _ _) = buildBehaviourGraph rs
       cmps = flattenedComponents gr
   in [ m | m <- subsets $ support rs, conservedInGraph bhg cmps m ]
