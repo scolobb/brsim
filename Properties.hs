@@ -189,6 +189,9 @@ sccDAG gr =
       dag = buildG (1, IntMap.size resMap) dagEdges
   in (dag, resMap)
 
+sets :: BehaviourGraph -> [Vertex] -> [Symbols]
+sets (BehaviourGraph _ sarr _) = map (sarr Array.!)
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(BehaviourGraph gr _ _) = buildBehaviourGraph rs
