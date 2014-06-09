@@ -192,6 +192,28 @@ sccDAG gr =
 sets :: BehaviourGraph -> [Vertex] -> [Symbols]
 sets (LabelledGraph _ sarr _) = map (sarr Array.!)
 
+-- The conservation dependency graph.
+type ConsDepGraph = LabelledGraph Symbol
+
+-- Builds the conservation dependency graph based on the supplied
+-- behaviour graph and the support set of the original reaction
+-- system.
+buildConsDepGraph :: BehaviourGraph -> Symbols -> ConsDepGraph
+buildConsDepGraph bhg@(LabelledGraph gr _ _) supp =
+  let cmps = flattenedComponents gr
+      symbIdx = zip [1..] $ Set.toList supp
+      symbArr = Array.array (1, Set.size supp) symbIdx
+      symbMap = Map.fromList $ map swap symbIdx
+
+      resEdges = [ (symbMap Map.! x, symbMap Map.! y)
+                 | cmp <- cmps
+                 , x <- Set.elems $ singletons bhg cmp
+                 , y <- Set.elems $ Set.unions $ sets bhg cmp
+                 , x /= y ]
+
+      consDepGr = buildG (1, Set.size supp) resEdges
+  in LabelledGraph consDepGr symbArr symbMap
+
 listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(LabelledGraph gr _ _) = buildBehaviourGraph rs
