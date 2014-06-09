@@ -149,6 +149,11 @@ subgraph gr vs =
 descendants :: Graph -> Vertex -> [Vertex]
 descendants gr v = flatten $ head $ dfs gr [v]
 
+-- Lists the ancestors of a vertex in the graph.  Vertex 'w' is an
+-- ancestor of 'v' if 'v' is a descendant of 'w'.
+ancestors :: Graph -> Vertex -> [Vertex]
+ancestors gr = descendants (transposeG gr)
+
 -- Computes the source sets of the given DAG.  The behaviour of this
 -- function is undefined when the graph is not a DAG.
 sourceSetsDAG :: Graph -> [[Vertex]]
