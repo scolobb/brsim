@@ -34,7 +34,7 @@ import qualified Data.Map as Map
 import qualified Data.Array as Array
 import Data.Graph
 import Data.Tree
-import Data.List (subsequences, partition, (\\), nub)
+import Data.List
 import Data.Tuple (swap)
 import qualified Data.IntMap as IntMap
 
@@ -223,4 +223,55 @@ listConservedSets :: ReactionSystem -> [Symbols]
 listConservedSets rs =
   let bhg@(LabelledGraph gr _ _) = buildBehaviourGraph rs
       cmps = flattenedComponents gr
-  in [ m | m <- subsets $ support rs, conservedInGraph bhg cmps m ]
+      supp = support rs
+
+      -- There always is a component with an empty set.
+      (Just emptyCmp) = find (elem Set.empty . sets bhg) cmps
+      -- The singletons which appear in the component of the empty
+      -- set.
+      r = Set.elems $ singletons bhg emptyCmp
+      -- The singletons which appear in components, the union of sets
+      -- of which is the full support.
+      s = Set.elems $ Set.unions [ singletons bhg cmp
+                                 | cmp <- cmps, Set.unions (sets bhg cmp) == supp ]
+
+      (LabelledGraph consDepGr symbArr symbMap) = buildConsDepGraph bhg supp
+      (dagGr, sccMap) = sccDAG consDepGr
+
+      -- Find which vertices in the conservation dependency graph
+      -- correspond to the symbols in 'r' and 's'.
+      mappedR = map (symbMap Map.!) r
+      mappedS = map (symbMap Map.!) s
+
+      -- We have to remove from the conservation dependency graph all
+      -- the connected components containing species from 'r',
+      -- together with their descendants.  Find out which species
+      -- exactly we need to remove.
+      removeR = concatMap (descendants consDepGr) mappedR
+      -- We also have to remove the connected components containing
+      -- the species from 's'.  List the species we would need to
+      -- remove in this case.
+      removeS = concatMap (ancestors consDepGr) mappedS
+      remove = removeR ++ removeS
+
+      -- The indices of the SCC's to remove from the DAG induced by
+      -- the SCC's of the conservation dependency graph.
+      sccsToRemove = [ sccIdx | (sccIdx, vs) <- IntMap.assocs sccMap
+                              , intersect remove vs /= [] ]
+
+      -- Remove the unneeded SCC's from 'dagGr'.
+      (reducedConsDepGr, redMap) = subgraph dagGr $ vertices dagGr \\ sccsToRemove
+
+      ssets = sourceSetsDAG reducedConsDepGr
+
+      -- Map the vertices of each source sets to the vertices of the
+      -- full DAG induced by the SCC's of the conservation dependency
+      -- graph, then find which vertices are contained in these SCC's,
+      -- and finally the symbols associated with those vertices.
+      consSetsRaw = map (map (symbArr Array.!)
+                         . concatMap (sccMap IntMap.!)
+                         . map (redMap IntMap.!)
+                        ) ssets
+
+      -- Add the symbols from 's' to all of the raw conserved sets.
+  in [Set.empty] ++ map (Set.fromList . (++) s) consSetsRaw
