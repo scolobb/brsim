@@ -34,7 +34,7 @@ import qualified Data.Map as Map
 import qualified Data.Array as Array
 import Data.Graph
 import Data.Tree
-import Data.List (subsequences, partition, (\\))
+import Data.List (subsequences, partition, (\\), nub)
 import Data.Tuple (swap)
 import qualified Data.IntMap as IntMap
 
@@ -190,7 +190,7 @@ sccDAG gr =
         (idx, scc) <- sccsMap
         zip scc $ repeat idx
 
-      dagEdges = map ( (vMap IntMap.!) >< (vMap IntMap.!) ) $ edges gr
+      dagEdges = nub $ map ( (vMap IntMap.!) >< (vMap IntMap.!) ) $ edges gr
       dag = buildG (1, IntMap.size resMap) dagEdges
   in (dag, resMap)
 
