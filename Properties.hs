@@ -158,7 +158,7 @@ ancestors gr = descendants (transposeG gr)
 -- function is undefined when the graph is not a DAG.
 sourceSetsDAG :: Graph -> [[Vertex]]
 sourceSetsDAG gr = case vertices gr of
-  []  -> []
+  []  -> [[]]
   [v] -> [[], [v]]
   vs  -> let s = head $ sources gr
              t = descendants gr s
