@@ -151,6 +151,9 @@ doListConservedSets rsFile format outputFile = do
   (rs, _) <- readInput rsFile format ""
   outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
 
+withTimeout :: Int -> IO () -> IO ()
+withTimeout tout act = act
+
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right Plain
                                "arrow" -> Right Arrow
@@ -200,6 +203,10 @@ contextOutOpt = Arg.option ['c'] ["output-context"] (Arg.optional "" Arg.file) "
 \    If a file is specified, the complete sequence of contexts supplied to the reaction\n\
 \    system during an interactive run will be written to it."
 
+timeoutOpt = Arg.option ['t'] ["timeout"] (Arg.optional (-1) Arg.integer) (-1)
+             "\n    Force stop after the specified timeout, in seconds.\n\n\
+\    Negative values are interpreted as \"wait indefinitely\"."
+
 runCmd = Cmd.Command { Cmd.name = "run"
                      , Cmd.action = Cmd.withNonOption Arg.file $
                                     \rsFile ->
@@ -211,7 +218,10 @@ runCmd = Cmd.Command { Cmd.name = "run"
                                     \outputFile ->
                                     Cmd.withOption annotateOpt $
                                     \annotationFile ->
-                                    Cmd.io $ runInput rsFile format contextFile outputFile annotationFile
+                                    Cmd.withOption timeoutOpt $
+                                    \tout ->
+                                    Cmd.io $ withTimeout (fromIntegral tout) $
+                                    runInput rsFile format contextFile outputFile annotationFile
                      , Cmd.description = "Run the simulation of the reaction system given in FILE.\n\n\
 \The input file should contain a description of the reaction system and, optionally, a\n\
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
@@ -253,7 +263,10 @@ conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
                                               \format ->
                                               Cmd.withOption outputFileOpt $
                                               \outputFile ->
-                                              Cmd.io $ doListConservedSets rsFile format outputFile
+                                              Cmd.withOption timeoutOpt $
+                                              \tout ->
+                                              Cmd.io $ withTimeout (fromIntegral tout) $
+                                              doListConservedSets rsFile format outputFile
                                , Cmd.description = "Lists all sets which are conserved in \
 \the reaction system described in FILE.\n\n\
 \The set of species is derived from the set of species used in the rules.\n"
