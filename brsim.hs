@@ -33,6 +33,7 @@ import System.Console.Readline (readline)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
 import qualified Data.Set as Set
+import Control.Monad (when)
 
 -- The possible reaction description formats.
 data ReactionFormat = Plain -- A reaction is given as three lists of symbol names.
@@ -50,9 +51,9 @@ readInput rsFile format ctxFile = do
 
   txtCtx <- if ctxFile /= ""
             then TextIO.readFile ctxFile
-            else if Text.null maybeTxtCtx
-                 then return Text.empty
-                 else return $ Text.drop 4 maybeTxtCtx
+            else return $ if Text.null maybeTxtCtx
+                          then Text.empty
+                          else Text.drop 4 maybeTxtCtx
 
   let rules = case format of
         Plain -> readPlainReactions txtRs
@@ -62,7 +63,7 @@ readInput rsFile format ctxFile = do
 
   return (makeReactionSystem rules, contexts)
 
-outputFunc :: FilePath -> (Text.Text -> IO ())
+outputFunc :: FilePath -> Text.Text -> IO ()
 outputFunc outputFile  = case outputFile of
   "" -> TextIO.putStr
   file -> TextIO.writeFile file
@@ -72,9 +73,8 @@ writeOutput :: ReactionSystem -> InteractiveProcess -> ReactionFormat -> FilePat
 writeOutput rs iprocess format outputFile annotationFile = do
   outputFunc outputFile $ showListOfListsOfSymbols $ tail $ results iprocess
 
-  if annotationFile /= ""
-    then TextIO.writeFile annotationFile $ annotateFunc rs iprocess
-    else return ()
+  when (annotationFile /= "") $
+    TextIO.writeFile annotationFile $ annotateFunc rs iprocess
 
   where annotateFunc = case format of
           Plain -> annotatePlain
@@ -85,9 +85,8 @@ writeOutput rs iprocess format outputFile annotationFile = do
 runInput :: FilePath -> ReactionFormat -> FilePath -> FilePath -> FilePath -> IO ()
 runInput rsFile format ctxFile outputFile annotationFile = do
   (rs, ctx) <- readInput rsFile format ctxFile
-  if ctx == []
-    then error "ERROR: No context specified."
-    else return ()
+
+  when (null ctx) $ error "ERROR: No context specified."
 
   let res = run rs ctx
 
@@ -106,11 +105,11 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
     then do
     putStrLn "Context sequence provided.  The description of the last reached state follows.\n"
 
-    let state = (last contexts) `Set.union` (head results)
+    let state = last contexts `Set.union` head results
     TextIO.putStr $ annotateFunc rs (length contexts - 1) (last contexts) (head results)
-    TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols state)
+    TextIO.putStrLn $ "New result: " `Text.append` showSpaceSymbols state
     putStrLn ""
-    else do
+    else
     putStrLn "No context sequence provided, starting from scratch.\n"
 
   log <- go rs (last results) (length contexts) []
@@ -120,9 +119,8 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
 
   writeOutput rs (makeInteractiveProcess allContexts allResults) format outputFile annotationFile
 
-  if contextOutFile /= ""
-    then TextIO.writeFile contextOutFile $ showListOfListsOfSymbols allContexts
-    else return ()
+  when (contextOutFile /= "") $
+    TextIO.writeFile contextOutFile $ showListOfListsOfSymbols allContexts
 
   where go :: ReactionSystem -> Result -> Int -> [(Context, Result)] -> IO [(Context, Result)]
         go rs@(ReactionSystem _ reactions) res step acc = do
@@ -138,7 +136,7 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
                   newRes = apply reactions state
 
               TextIO.putStr $ annotateFunc rs step ctx res
-              TextIO.putStrLn $ "New result: " `Text.append` (showSpaceSymbols newRes)
+              TextIO.putStrLn $ "New result: " `Text.append` showSpaceSymbols newRes
               putStrLn ""
 
               go rs newRes (step + 1) ((ctx, newRes):acc)
@@ -154,8 +152,8 @@ doListConservedSets rsFile format outputFile = do
   outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
-                               "plain" -> Right $ Plain
-                               "arrow" -> Right $ Arrow
+                               "plain" -> Right Plain
+                               "arrow" -> Right Arrow
                                str -> Left $ "Unknown reaction format: " ++ show str
                           , Arg.name = "arrow|plain"
                           , Arg.defaultValue = Just Arrow
