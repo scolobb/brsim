@@ -34,6 +34,7 @@ import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
 import qualified Data.Set as Set
 import Control.Monad (when)
+import System.Timeout
 
 -- The possible reaction description formats.
 data ReactionFormat = Plain -- A reaction is given as three lists of symbol names.
@@ -152,7 +153,13 @@ doListConservedSets rsFile format outputFile = do
   outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
 
 withTimeout :: Int -> IO () -> IO ()
-withTimeout tout act = act
+withTimeout tout act =
+  let tout' = tout * 10^(6::Int)
+  in do
+    res <- timeout tout' act
+    case res of
+      Just _ -> return ()
+      Nothing -> error $ "ERROR: Timeout expired: " ++ (show tout) ++ " second(s)."
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right Plain
