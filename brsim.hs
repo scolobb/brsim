@@ -159,7 +159,7 @@ withTimeout tout act =
     res <- timeout tout' act
     case res of
       Just _ -> return ()
-      Nothing -> error $ "ERROR: Timeout expired: " ++ (show tout) ++ " second(s)."
+      Nothing -> error $ "ERROR: Timeout expired: " ++ (show tout) ++ " second(s).  Wrong format?"
 
 reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "plain" -> Right Plain
