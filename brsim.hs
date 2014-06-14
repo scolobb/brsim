@@ -33,7 +33,6 @@ import System.Console.Readline (readline)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
 import qualified Data.Set as Set
-import System.IO (stdout, hFlush)
 
 -- The possible reaction description formats.
 data ReactionFormat = Plain -- A reaction is given as three lists of symbol names.
