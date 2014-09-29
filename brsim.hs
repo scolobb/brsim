@@ -291,7 +291,7 @@ brsimCommand = Cmd.Command { Cmd.name = "brsim"
                            , Cmd.description = "A Basic Reaction System Simulator."
                            }
 
-brsimCommands :: Cmd.Commands
+brsimCommands :: Cmd.Commands IO
 brsimCommands = Cmd.Node brsimCommand [ Cmd.Node runCmd []
                                       , Cmd.Node interactCmd []
                                       , Cmd.Node listCmd [ Cmd.Node conservedSetsCmd [] ]
