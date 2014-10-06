@@ -166,10 +166,10 @@ reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                                "arrow" -> Right Arrow
                                str -> Left $ "Unknown reaction format: " ++ show str
                           , Arg.name = "arrow|plain"
-                          , Arg.defaultValue = Just Arrow
+                          , Arg.defaultValue = Just Plain
                           }
 
-reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Arrow
+reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Plain
                     "\n    The format of the reaction description.\n\n\
 \    The default value of this argument is \"arrow\", in which case the rules should be\n\
 \    specified using a notation similar to the chemical notation:\n\n\
