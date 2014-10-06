@@ -56,13 +56,13 @@ readInput rsFile format ctxFile = do
                           then Text.empty
                           else Text.drop 4 maybeTxtCtx
 
-  let rules = case format of
+  let reactions = case format of
         Plain -> readPlainReactions txtRs
         Arrow -> readArrowReactions txtRs
 
       contexts = readListOfListsOfSymbols txtCtx
 
-  return (makeReactionSystem rules, contexts)
+  return (makeReactionSystem reactions, contexts)
 
 outputFunc :: FilePath -> Text.Text -> IO ()
 outputFunc outputFile  = case outputFile of
