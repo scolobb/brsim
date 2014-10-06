@@ -196,7 +196,7 @@ annotateOpt = Arg.option ['a'] ["annotate"] (Arg.optional "" Arg.file) ""
                 "\n    The file to write annotated output to.\n\n\
 \    If this option is specified, the simulator will write a detailed description of\n\
 \    the activity of the system during the simulation.  For each step, it will write\n\
-\    the context, the latest result, the current state, and the enabled rules.\n"
+\    the context, the latest result, the current state, and the enabled reactions.\n"
 
 interactiveOpt = Arg.option ['i'] ["interact"] (Arg.optional False Arg.boolean) False
                  "\n    Start an interactive simulation session.\n\n\
@@ -277,7 +277,7 @@ conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
                                               doListConservedSets rsFile format outputFile
                                , Cmd.description = "Lists all sets which are conserved in \
 \the reaction system described in FILE.\n\n\
-\The set of species is derived from the set of species used in the rules.\n"
+\The set of species is derived from the set of species used in the reactions.\n"
                                }
 
 help = Cmd.Command { Cmd.name = "help"
