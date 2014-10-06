@@ -53,52 +53,50 @@ description of the reaction system it is required to simulate.  This
 description should be provided in a file, in the form of a list of
 rules.
 
-There are two different formats to specify rules.  The most intuitive
-(in author's very subjective opinion) is the *arrow format* based on
-the ways chemists normally write reactions.  For example, a reaction
-which consumes `a` and `b`, produces `c` and `d`, and is inhibited by
-`e` and `f` will written as 
-
-```
-a + b -> c + d | e f
-```
-
-If the reaction has no inhibitors, it can be written like this:
-
-```
-a + b -> c + d
-```
-
-`brsim` also allows exotic kinds of reactions: those which have no
-reactants or no products.  The conventional representation of empty
-sets which holds throughout all files read or written by `brsim` is
-the dot symbol: **.**.  Thus, a reaction which unconditionally
-produces `a` can be written as follows:
-
-```
-. -> a
-```
-
-It is perfectly possible to omit the left-hand or right-hand side
-altogether, but using the dot-syntax is encouraged.
-
-The other format which in which the reactions can be specified is the
-*plain format* which matches the standard notation used in seminal
-papers on reaction systems (like [0]) and in which the reactions are
+There are two different formats to specify rules.  The one which is
+closest to the conventional way of writing reactions as 3-tuples (like
+in [0]) is called the *plain format*.  In this format, reactions are
 given as three sets of symbols, corresponding to the reactants, the
-inhibitors, and the products.  Thus the same reaction involving the
-symbols `a` through `b` can also be written in the following way:
+inhibitors, and the products.  For example, a reaction which consumes
+`a` and `b`, produces `c` and `d`, and is inhibited by `e` and `f`
+will be written as
 
 ```
 a b, e f, c d
 ```
 
-If a reaction has no inhibitors the conventional notation for the
-empty set can be used:
+`brsim` also supports a format which may be more intuitive for
+newcomers: the *arrow format*, based on the ways chemists normally
+write reactions.  In this format, the same reaction will be specified
+like this:
 
 ```
-a b, . , c d
+a + b -> c + d | e f
 ```
+
+`brsim` allows reactions with empty components, that is, reactions
+which have no reactants, inhibitors, or products.  The representation
+of empty sets which holds throughout all files read or written by
+`brsim` is the dot symbol: **.**.  Thus, a reaction which
+unconditionally produces `a` can be written as follows:
+
+```
+. , . , a
+```
+
+It is possible to just omit the corresponding components and specify
+this reaction as `, , a`, but using the dot-syntax is encouraged for
+readability and consistency.
+
+Components of the reaction can also be omitted in the arrow format,
+and the same reaction could be specified like this:
+
+```
+. -> a
+```
+
+Note that you don't have to use the vertical bar at all in the arrow
+format if the reaction cannot be inhibited.
 
 ## Batch Mode
 
