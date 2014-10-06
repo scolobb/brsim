@@ -1,11 +1,11 @@
 # brsim
 
 `brsim` is a `B`asic `R`eaction `S`ystem `Sim`ulator.  Given the
-description of the rules of a reaction system and a context sequence,
+description of the reactions of a reaction system and a context sequence,
 `brsim` can produce the corresponding result sequence, and, if
 required, an annotated description of the obtained interactive
 process, which includes listing, for each step, the context, the
-result, the full state, as well as the enabled rules.  `brsim` also
+result, the full state, as well as the enabled reactions.  `brsim` also
 offers an interactive mode in which the contexts is to be provided by
 the user.  Finally, `brsim` can be used to list all the sets which are
 conserved in a reaction system.
@@ -51,9 +51,9 @@ reader is referred to [0].
 The most important thing `brsim` needs to have in its input is the
 description of the reaction system it is required to simulate.  This
 description should be provided in a file, in the form of a list of
-rules.
+reactions.
 
-There are two different formats to specify rules.  The one which is
+There are two different formats to specify reactions.  The one which is
 closest to the conventional way of writing reactions as 3-tuples (like
 in [0]) is called the *plain format*.  In this format, reactions are
 given as three sets of symbols, corresponding to the reactants, the
@@ -234,7 +234,7 @@ STEP 3
 Context:       j
 Last result:   a b c d
 State:         a b c d j
-Enabled rules:
+Enabled reactions:
   .->a
   a+b->c+d|e f
 New result: a b c d j
