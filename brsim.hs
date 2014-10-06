@@ -171,16 +171,17 @@ reactionFormat = Arg.Type { Arg.parser = \val -> case val of
 
 reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Plain
                     "\n    The format of the reaction description.\n\n\
-\    The default value of this argument is \"arrow\", in which case the rules should be\n\
-\    specified using a notation similar to the chemical notation:\n\n\
-\        <left hand side> -> <right hand side> | <list of inhibitors>\n\n\
+\    The default value of this argument is \"plain\", in which case the reactions should be\n\
+\    specified using a notation similar to the conventional way of writing reactions:\n\n\
+\        <reactants>, <inhibitors>, <products>\n\n\
 \    For example, a reaction which consumes a and b, produces c and d, and is inhibited\n\
 \    by e and f, can be written as follows:\n\n\
-\        a+b->c+d|e f\n\n\
-\    If the value of this argument is \"plain\", the rules are specified as lists of\n\
-\    reactants, inhibitors, and products respectively.  Thus, the same reaction can be\n\
-\    written in the following way:\n\n\
-\        a b, e f, c d\n"
+\        a b, e f, c d\n\n\
+\    If the value of the argument is \"arrow\", the reactions are specified in a notation\n\
+\    similar to the way in which they are written in chemistry:\n\n\
+\        <reactants> -> <products> | <inhibitors>\n\n\
+\    Thus, the same reaction as above could be specified in the following way:\n\
+\        a b -> c d | e f\n"
 
 contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
                  "\n    The file listing the contexts of an interactive process.\n\n\
