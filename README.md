@@ -222,7 +222,7 @@ for the given context sequence and will start prompting you for new
 contexts after it has exhausted the input.  Therefore, if you type:
 
 ```
-brsim interact example-arrow.rs
+brsim interact example-plain.rs
 ```
 
 `brsim` will produce the following prompt:
@@ -234,9 +234,9 @@ STEP 3
 Context:       j
 Last result:   a b c d
 State:         a b c d j
-Enabled reactions:
-  .->a
-  a+b->c+d|e f
+Enabled rules:
+  ., ., a
+  a b, e f, c d
 New result: a b c d j
 
 Next context:
