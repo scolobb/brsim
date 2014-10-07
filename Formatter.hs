@@ -86,7 +86,7 @@ annotateState rformat (ReactionSystem _ rs) step ctx res =
      , "Context:       " `Text.append` showSpaceSymbols ctx
      , "Last result:   " `Text.append` showSpaceSymbols res
      , "State:         " `Text.append` showSpaceSymbols state
-     , "Enabled rules:"
+     , "Enabled reactions:"
      ] ++ (map (Text.append "  " . rformat) $ filter ((flip enabled) state) $ Set.toList rs)
 
 -- | Annotates a state of the supplied reaction system printing the
@@ -107,11 +107,11 @@ annotate rformat rs (InteractiveProcess contexts results) =
   where annotateState' (n, ctx, res) = annotateState rformat rs n ctx res
 
 -- | Annotate an interactive process of the supplied reaction system,
--- printing rules in plain format.
+-- printing reactions in plain format.
 annotatePlain :: ReactionSystem -> InteractiveProcess -> Text.Text
 annotatePlain = annotate showPlainReaction
 
 -- | Annotate an interactive process of the supplied reaction system,
--- printing rules in arrow format.
+-- printing reactions in arrow format.
 annotateArrow :: ReactionSystem -> InteractiveProcess -> Text.Text
 annotateArrow = annotate showArrowReaction
