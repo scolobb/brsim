@@ -110,13 +110,13 @@ where `FILE` is the path to the file containing (at least) the
 description of the reaction system to simulate.  `FILE` might
 optionally include the context sequence, which should be separated
 from the description of the system by a line containing three dashes:
-`"---"`.  Thus a valid input file `example-arrow.rs` may look like
+`"---"`.  Thus a valid input file `example-plain.rs` may look like
 this:
 
 ```
-a + b -> c + d | e f
-. -> a
--> b | c
+a b, e f, c d
+. , . , a
+. , c , b
 
 ---
 
@@ -133,14 +133,14 @@ set containing `a` and `b`, the second context is the set containing
 sets comes really handy, since you can specify an empty context by
 just putting a `.` on the corresponding line.
 
-Correspondingly, the file `example-plain.rs` containing the
-description of the same reaction system in the plain format might look
+Correspondingly, the file `example-arrow.rs` containing the
+description of the same reaction system in the arrow format might look
 like this:
 
 ```
-a b, e f, c d
-. , . , a
-. , c , b
+a + b -> c + d | e f
+. -> a
+-> b | c
 
 ---
 
@@ -150,10 +150,10 @@ e f
 j
 ```
 
-Running `example-arrow.rs` is as easy as typing
+Running `example-plain.rs` is as easy as typing
 
 ```
-brsim run example-arrow.rs
+brsim run example-plain.rs
 ```
 
 on your command line.  `brsim` will then write the result sequence
@@ -167,25 +167,25 @@ a
 a b
 ```
 
-To run `example-plain.rs`, you should explicitly tell `brsim` that the
-reactions are specified in plain format:
+To run `example-arrow.rs`, you should explicitly tell `brsim` that the
+reactions are specified in the arrow format:
 
 ```
-brsim run --format=plain example-plain.rs
+brsim run --format=arrow example-arrow.rs
 ```
 
 `brsim` can be told to write the result sequence to a file rather then
 to the standard output via the `--output` option:
 
 ```
-brsim run example-arrow.rs --output=example.out
+brsim run example-plain.rs --output=example.out
 ```
 
 Finally, to get nice detailed annotations for the interactive process,
 you should use the `--annotate` option in the following way:
 
 ```
-brsim run example-arrow.rs --annotate=example.an
+brsim run example-plain.rs --annotate=example.an
 ```
 
 Context sequences can also be specified in a separate file.  If you
@@ -201,7 +201,7 @@ a b c
 into `example.ctx` and then run `brsim` like this:
 
 ```
-brsim run example-arrow.rs --context=example.ctx
+brsim run example-plain.rs --context=example.ctx
 ```
 
 you should get the following output:
