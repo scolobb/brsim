@@ -87,3 +87,8 @@ interKind ss m = case partition (m `intersects`) ss of
   (_, []) -> IntersectsAll
   ([], _) -> DisjointAll
   _       -> Mixed
+
+-- Determines in which kind of intersection relation a set of symbols
+-- is with the set of vertices of a behaviour graph.
+cmpInterKind :: BehaviourGraph -> [Node] -> Symbols -> IntersectionKind
+cmpInterKind gr cmp = interKind (map (lab gr) cmp)
