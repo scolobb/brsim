@@ -141,3 +141,7 @@ buildConsDepGraph' gr ss =
 
 buildConsDepGraph :: ReactionSystem -> ConsDepGraph
 buildConsDepGraph rs@(ReactionSystem s _) = buildConsDepGraph' (buildBehaviourGraph rs) s
+
+-- Lists the source vertices of the supplied directed graph.
+sources :: Graph gr => gr a b -> [Node]
+sources gr = [ v | v <- nodes gr , indeg gr v == 0 ]
