@@ -114,3 +114,8 @@ conservedInGraph gr m = all (isConsistent' gr m) (components gr)
 -- vertices of the behaviour graph.
 cover :: BehaviourGraph -> [Node] -> Symbols
 cover gr vs = Set.unions $ mlabj gr vs
+
+-- Lists the elements appearing in singletons in the given set of
+-- vertices of the behaviour graph.
+singletons :: BehaviourGraph -> [Node] -> [Symbol]
+singletons gr vs = concatMap Set.toList [ v | v <- mlabj gr vs, Set.size v == 1 ]
