@@ -92,3 +92,8 @@ interKind ss m = case partition (m `intersects`) ss of
 -- is with the set of vertices of a behaviour graph.
 cmpInterKind :: BehaviourGraph -> [Node] -> Symbols -> IntersectionKind
 cmpInterKind gr cmp = interKind (map (lab gr) cmp)
+
+-- Checks if a set is consistent with the supplied vertices of the
+-- behaviour graph.
+isConsistent :: BehaviourGraph -> [Node] -> Symbols -> Bool
+isConsistent gr vs = (`elem` [IntersectsAll, DisjointAll]) . cmpInterKind gr vs
