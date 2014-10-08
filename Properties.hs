@@ -29,7 +29,7 @@ module Properties ( conserved
 
 import ReactionSystems
 import qualified Data.Set as Set
-import Data.List (subsequences)
+import Data.List (subsequences,partition)
 import Data.Graph.Inductive.Graph
 import Data.Graph.Inductive.PatriciaTree
 import qualified Data.Map as Map
@@ -70,3 +70,20 @@ buildBehaviourGraph rs@(ReactionSystem s _) =
       vmap = Map.fromList $ map swap vs
       es = map (\(i, subs) -> (i, vmap Map.!  applyRS rs subs  , ())) vs
   in mkGraph vs es
+
+-- Describes the relationship a set may be in with a set of sets: it
+-- either intersects all of them, is disjoint from all of them, or
+-- intersects some of them and is disjoint from some other of them.
+data IntersectionKind = IntersectsAll | DisjointAll | Mixed
+                      deriving (Show, Read, Eq, Ord)
+
+-- Determines in which kind of intersection relation a set is with
+-- respect to a given list of sets.
+--
+-- If the list of sets is empty, the behaviour of the function is
+-- undefined.
+intersectionKind :: Ord a => [Set.Set a] -> Set.Set a -> IntersectionKind
+intersectionKind ss m = case partition (m `intersects`) ss of
+  (_, []) -> IntersectsAll
+  ([], _) -> DisjointAll
+  _       -> Mixed
