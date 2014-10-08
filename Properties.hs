@@ -133,7 +133,7 @@ buildConsDepGraph' gr ss =
       es' = concatMap (\cmp ->
                         let snglts = singletons gr cmp
                             cvr = Set.elems $ cover gr cmp
-                        in [ (x, y) | x <- snglts, y <- cvr ]
+                        in [ (x, y) | x <- snglts, y <- cvr, x /= y ]
                       ) $ components gr
       smap = Map.fromList $ map swap vs
       es = map (\(x, y) -> (smap Map.! x, smap Map.! y, ())) es'
