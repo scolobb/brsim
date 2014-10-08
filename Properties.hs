@@ -21,4 +21,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -}
 
-module Properties () where
+module Properties ( conserved
+                  ) where
+
+import ReactionSystems
+import qualified Data.Set as Set
+import Data.List (subsequences)
+
+-- Since we use 'Set.toAscList', the empty set always comes first.
+subsets :: Ord a =>  Set.Set a -> [Set.Set a]
+subsets = map Set.fromAscList . subsequences . Set.toAscList
+
+intersects :: Ord a =>  Set.Set a -> Set.Set a -> Bool
+a `intersects` b = not $ Set.null $ a `Set.intersection` b
+
+-- | Checks if the supplied set of species is conserved by the
+-- reaction system.
+conserved :: ReactionSystem -> Symbols -> Bool
+conserved sys@(ReactionSystem _ rs) m =
+  all (\sub -> let ressubs = apply rs sub
+               in m `intersects` sub == m `intersects` ressubs
+      ) $ subsets $ support sys
