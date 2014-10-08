@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
 module Properties ( conserved
+                  , reduce
                   ) where
 
 import ReactionSystems
@@ -42,3 +43,14 @@ conserved sys@(ReactionSystem _ rs) m =
   all (\sub -> let ressubs = apply rs sub
                in m `intersects` sub == m `intersects` ressubs
       ) $ subsets $ support sys
+
+-- | Reduces the supplied reaction system to a set T: the new system
+-- conserves the same sets with respect to the background set as the
+-- original system does with respect to T.
+--
+-- For details, we refer to the soon-to-be-published paper "Dependency
+-- Graphs and Mass Conservation in Reaction Systems".
+reduce :: ReactionSystem -> Symbols -> ReactionSystem
+reduce (ReactionSystem _ rs) t = makeReactionSystem' $ Set.map reduceReaction $ Set.filter isGood rs
+  where isGood (Reaction r _ _) = r `Set.isSubsetOf` t
+        reduceReaction (Reaction r i p) = Reaction r (i `Set.intersection` t) (p `Set.intersection` t)
