@@ -108,3 +108,8 @@ isConsistent gr vs = (`elem` [IntersectsAll, DisjointAll]) . grInterKind gr vs
 conservedInGraph :: BehaviourGraph -> Symbols -> Bool
 conservedInGraph gr m = all (isConsistent' gr m) (components gr)
   where isConsistent' g = flip (isConsistent g)
+
+-- Computes the cover (the union of the associated sets) of a set of
+-- vertices of the behaviour graph.
+cover :: BehaviourGraph -> [Node] -> Symbols
+cover gr vs = Set.unions $ map (labj gr) vs
