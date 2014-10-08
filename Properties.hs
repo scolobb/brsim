@@ -82,8 +82,8 @@ data IntersectionKind = IntersectsAll | DisjointAll | Mixed
 --
 -- If the list of sets is empty, the behaviour of the function is
 -- undefined.
-intersectionKind :: Ord a => [Set.Set a] -> Set.Set a -> IntersectionKind
-intersectionKind ss m = case partition (m `intersects`) ss of
+interKind :: Ord a => [Set.Set a] -> Set.Set a -> IntersectionKind
+interKind ss m = case partition (m `intersects`) ss of
   (_, []) -> IntersectsAll
   ([], _) -> DisjointAll
   _       -> Mixed
