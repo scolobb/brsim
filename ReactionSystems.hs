@@ -27,6 +27,7 @@ module ReactionSystems ( Symbol(..)
                        , Reactions
                        , ReactionSystem(..)
                        , makeReactionSystem
+                       , makeReactionSystem'
                        , support
                        , enabled
                        , en
@@ -68,6 +69,9 @@ makeReactionSystem rs = let reactions = Set.fromList rs
                             symbols = foldMap listSymbols reactions
                         in ReactionSystem symbols reactions
   where listSymbols (Reaction r i p) = r `Set.union` i `Set.union` p
+
+makeReactionSystem' :: Reactions -> ReactionSystem
+makeReactionSystem' = makeReactionSystem . Set.toList
 
 support :: ReactionSystem -> Symbols
 support (ReactionSystem _ rs) = Set.unions $ uncurry (++) $ unzip
