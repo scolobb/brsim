@@ -92,11 +92,12 @@ interKind ss m = case partition (m `intersects`) ss of
   _       -> Mixed
 
 labj gr = fromJust . lab gr
+mlabj gr = map (labj gr)
 
 -- Determines in which kind of intersection relation a set of symbols
 -- is with the set of vertices of a behaviour graph.
 grInterKind :: BehaviourGraph -> [Node] -> Symbols -> IntersectionKind
-grInterKind gr vs = interKind (map (labj gr) vs)
+grInterKind gr vs = interKind (mlabj gr vs)
 
 -- Checks if a set is consistent with the supplied vertices of the
 -- behaviour graph.
@@ -112,4 +113,4 @@ conservedInGraph gr m = all (isConsistent' gr m) (components gr)
 -- Computes the cover (the union of the associated sets) of a set of
 -- vertices of the behaviour graph.
 cover :: BehaviourGraph -> [Node] -> Symbols
-cover gr vs = Set.unions $ map (labj gr) vs
+cover gr vs = Set.unions $ mlabj gr vs
