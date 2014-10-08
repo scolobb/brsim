@@ -25,6 +25,7 @@ module Properties ( conserved
                   , reduce
                   , BehaviourGraph
                   , buildBehaviourGraph
+                  , conservedInGraph
                   ) where
 
 import ReactionSystems
@@ -32,6 +33,7 @@ import qualified Data.Set as Set
 import Data.List (subsequences,partition)
 import Data.Graph.Inductive.Graph
 import Data.Graph.Inductive.PatriciaTree
+import Data.Graph.Inductive.Query.DFS (components)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 
@@ -97,3 +99,9 @@ grInterKind gr vs = interKind (map (lab gr) vs)
 -- behaviour graph.
 isConsistent :: BehaviourGraph -> [Node] -> Symbols -> Bool
 isConsistent gr vs = (`elem` [IntersectsAll, DisjointAll]) . grInterKind gr vs
+
+-- | Given the behaviour graph of a reaction system, checks if the
+-- supplied set is conserved.
+conservedInGraph :: BehaviourGraph -> Symbols -> Bool
+conservedInGraph gr m = all (isConsistent' gr m) (components gr)
+  where isConsistent' g = flip (isConsistent g)
