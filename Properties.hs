@@ -36,6 +36,7 @@ import Data.Graph.Inductive.PatriciaTree
 import Data.Graph.Inductive.Query.DFS (components)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
+import Data.Maybe (fromJust)
 
 -- Since we use 'Set.toAscList', the empty set always comes first.
 subsets :: Ord a =>  Set.Set a -> [Set.Set a]
@@ -90,10 +91,12 @@ interKind ss m = case partition (m `intersects`) ss of
   ([], _) -> DisjointAll
   _       -> Mixed
 
+labj gr = fromJust . lab gr
+
 -- Determines in which kind of intersection relation a set of symbols
 -- is with the set of vertices of a behaviour graph.
 grInterKind :: BehaviourGraph -> [Node] -> Symbols -> IntersectionKind
-grInterKind gr vs = interKind (map (lab gr) vs)
+grInterKind gr vs = interKind (map (labj gr) vs)
 
 -- Checks if a set is consistent with the supplied vertices of the
 -- behaviour graph.
