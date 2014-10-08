@@ -26,6 +26,9 @@ module Properties ( conserved
                   , BehaviourGraph
                   , buildBehaviourGraph
                   , conservedInGraph
+                  , ConsDepGraph
+                  , buildConsDepGraph'
+                  , buildConsDepGraph
                   ) where
 
 import ReactionSystems
@@ -119,3 +122,22 @@ cover gr vs = Set.unions $ mlabj gr vs
 -- vertices of the behaviour graph.
 singletons :: BehaviourGraph -> [Node] -> [Symbol]
 singletons gr vs = concatMap Set.toList [ v | v <- mlabj gr vs, Set.size v == 1 ]
+
+type ConsDepGraph = Gr Symbol ()
+
+-- Builds the conservation dependency graph starting from the
+-- behaviour graph and the set of symbols to include.
+buildConsDepGraph' :: BehaviourGraph -> Symbols -> ConsDepGraph
+buildConsDepGraph' gr ss =
+  let vs = zip [1..] $ Set.elems ss
+      es' = concatMap (\cmp ->
+                        let snglts = singletons gr cmp
+                            cvr = Set.elems $ cover gr cmp
+                        in [ (x, y) | x <- snglts, y <- cvr ]
+                      ) $ components gr
+      smap = Map.fromList $ map swap vs
+      es = map (\(x, y) -> (smap Map.! x, smap Map.! y, ())) es'
+  in mkGraph vs es
+
+buildConsDepGraph :: ReactionSystem -> ConsDepGraph
+buildConsDepGraph rs@(ReactionSystem s _) = buildConsDepGraph' (buildBehaviourGraph rs) s
