@@ -23,11 +23,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 module Properties ( conserved
                   , reduce
+                  , BehaviourGraph
+                  , buildBehaviourGraph
                   ) where
 
 import ReactionSystems
 import qualified Data.Set as Set
 import Data.List (subsequences)
+import Data.Graph.Inductive.Graph
+import Data.Graph.Inductive.PatriciaTree
+import qualified Data.Map as Map
+import Data.Tuple (swap)
 
 -- Since we use 'Set.toAscList', the empty set always comes first.
 subsets :: Ord a =>  Set.Set a -> [Set.Set a]
@@ -54,3 +60,13 @@ reduce :: ReactionSystem -> Symbols -> ReactionSystem
 reduce (ReactionSystem _ rs) t = makeReactionSystem' $ Set.map reduceReaction $ Set.filter isGood rs
   where isGood (Reaction r _ _) = r `Set.isSubsetOf` t
         reduceReaction (Reaction r i p) = Reaction r (i `Set.intersection` t) (p `Set.intersection` t)
+
+type BehaviourGraph = Gr Symbols ()
+
+-- | Builds the behaviour graph of a reaction system.
+buildBehaviourGraph :: ReactionSystem -> BehaviourGraph
+buildBehaviourGraph rs@(ReactionSystem s _) =
+  let vs = zip [1..] $ subsets s
+      vmap = Map.fromList $ map swap vs
+      es = map (\(i, subs) -> (i, vmap Map.!  applyRS rs subs  , ())) vs
+  in mkGraph vs es
