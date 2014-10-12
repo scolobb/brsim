@@ -145,3 +145,17 @@ buildConsDepGraph rs@(ReactionSystem s _) = buildConsDepGraph' (buildBehaviourGr
 -- Lists the source vertices of the supplied directed graph.
 sources :: Graph gr => gr a b -> [Node]
 sources gr = [ v | v <- nodes gr , indeg gr v == 0 ]
+
+-- Builds a subgraph of the given graph which only includes the
+-- supplied nodes.
+subgraph :: DynGraph gr => [Node] -> gr a b -> gr a b
+subgraph vs =
+  let base = Set.fromList vs
+  in buildGr . ufold (\(inadj, v, l, outadj) res ->
+                       if v `Set.notMember` base
+                       then res
+                       else let good = (`Set.member` base) . snd
+                                outadj' = filter good outadj
+                                inadj'  = filter good inadj
+                            in (inadj', v, l, outadj'):res
+                     ) []
