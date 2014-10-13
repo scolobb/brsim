@@ -159,3 +159,7 @@ subgraph vs =
                                 inadj'  = filter good inadj
                             in (inadj', v, l, outadj'):res
                      ) []
+
+-- Checks if there is a directed edge between two vertices.
+isEdge :: Graph gr => gr a b -> Node -> Node -> Bool
+isEdge gr v w = w `elem` (suc gr v)
