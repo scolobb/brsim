@@ -146,6 +146,18 @@ buildConsDepGraph rs@(ReactionSystem s _) = buildConsDepGraph' (buildBehaviourGr
 sources :: Graph gr => gr a b -> [Node]
 sources gr = [ v | v <- nodes gr , indeg gr v == 0 ]
 
+-- Only leaves in the graph the nodes which satisfy the given
+-- predicate.
+nfilter :: DynGraph gr => (LNode a -> Bool) -> gr a b -> gr a b
+nfilter pred gr = buildGr $ ufold (\(inadj, v, l, outadj) res ->
+                                    if not $ pred (v, l)
+                                    then res
+                                    else let good (_, w) = pred (w, labj gr w)
+                                             outadj' = filter good outadj
+                                             inadj'  = filter good inadj
+                                         in (inadj', v, l, outadj'):res
+                                  ) [] gr
+
 -- Builds a subgraph of the given graph which only includes the
 -- supplied nodes.
 subgraph :: DynGraph gr => [Node] -> gr a b -> gr a b
