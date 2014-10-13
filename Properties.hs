@@ -36,7 +36,7 @@ import qualified Data.Set as Set
 import Data.List (subsequences,partition,(\\))
 import Data.Graph.Inductive.Graph
 import Data.Graph.Inductive.PatriciaTree
-import Data.Graph.Inductive.Query.DFS (components,scc,reachable)
+import Data.Graph.Inductive.Query.DFS
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 import Data.Maybe (fromJust)
@@ -179,6 +179,12 @@ condensation gr = let sccs = scc gr
                           else []
                   in mkGraph vs es
 
+descendants :: Graph gr => Node -> gr a b -> [Node]
+descendants = reachable
+
+ancestors :: Graph gr => Node -> gr a b -> [Node]
+ancestors v = rdfs [v]
+
 -- Computes the source sets of the given graph.  The behaviour of this
 -- function is undefined when the graph is not a DAG.
 --
@@ -188,7 +194,7 @@ sourceSetsDAG gr | isEmpty gr = [[]]
                  | otherwise =
   let vs = nodes gr
       (s:_) = sources gr
-      t = reachable s gr -- The descendants of 's'.
+      t = descendants s gr
 
       gminus = subgraph (vs \\ t  ) gr
       gplus  = subgraph (vs \\ [s]) gr
