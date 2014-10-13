@@ -36,7 +36,7 @@ import qualified Data.Set as Set
 import Data.List (subsequences,partition)
 import Data.Graph.Inductive.Graph
 import Data.Graph.Inductive.PatriciaTree
-import Data.Graph.Inductive.Query.DFS (components)
+import Data.Graph.Inductive.Query.DFS (components,scc)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 import Data.Maybe (fromJust)
@@ -163,3 +163,18 @@ subgraph vs =
 -- Checks if there is a directed edge between two vertices.
 isEdge :: Graph gr => gr a b -> Node -> Node -> Bool
 isEdge gr v w = w `elem` (suc gr v)
+
+-- Computes the condensation of the given graph, i.e., the graph of
+-- its strongly connected components.
+condensation :: Graph gr => gr a b -> gr [Node] ()
+condensation gr = let sccs = scc gr
+                      vs = zip [1..] sccs
+                      vMap = Map.fromList $ map swap vs
+                      es = do
+                        c1 <- sccs
+                        c2 <- sccs
+
+                        if (c1 /= c2) && ( or [ isEdge gr v w | v <- c1, w <- c2 ] )
+                          then [(vMap Map.! c1, vMap Map.! c2, ())]
+                          else []
+                  in mkGraph vs es
