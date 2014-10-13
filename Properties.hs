@@ -33,10 +33,10 @@ module Properties ( conserved
 
 import ReactionSystems
 import qualified Data.Set as Set
-import Data.List (subsequences,partition)
+import Data.List (subsequences,partition,(\\))
 import Data.Graph.Inductive.Graph
 import Data.Graph.Inductive.PatriciaTree
-import Data.Graph.Inductive.Query.DFS (components,scc)
+import Data.Graph.Inductive.Query.DFS (components,scc,reachable)
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 import Data.Maybe (fromJust)
@@ -178,3 +178,22 @@ condensation gr = let sccs = scc gr
                           then [(vMap Map.! c1, vMap Map.! c2, ())]
                           else []
                   in mkGraph vs es
+
+-- Computes the source sets of the given graph.  The behaviour of this
+-- function is undefined when the graph is not a DAG.
+--
+-- This is an implementation of Algorithm 3.1 of our paper.
+sourceSetsDAG :: DynGraph gr => gr a b -> [[Node]]
+sourceSetsDAG gr | isEmpty gr = [[]]
+                 | otherwise =
+  let vs = nodes gr
+      (s:_) = sources gr
+      t = reachable s gr -- The descendants of 's'.
+
+      gminus = subgraph (vs \\ t  ) gr
+      gplus  = subgraph (vs \\ [s]) gr
+
+      gminusSrc = sourceSetsDAG gminus
+      gplusSrc  = sourceSetsDAG gplus
+
+  in gminusSrc ++ [ s:src | src <- gplusSrc ]
