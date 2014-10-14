@@ -150,7 +150,7 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
 doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
 doListConservedSets rsFile format outputFile = do
   (rs, _) <- readInput rsFile format ""
-  outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets rs
+  outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets $ reduce rs $ support rs
 
 withTimeout :: Int -> IO () -> IO ()
 withTimeout tout act =
