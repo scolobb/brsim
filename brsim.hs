@@ -265,11 +265,11 @@ interactCmd = Cmd.Command { Cmd.name = "interact"
 \the given context sequence and will start the interactive session at the last state.\n"
                           }
 
-listCmd = Cmd.Command { Cmd.name = "list"
+showCmd = Cmd.Command { Cmd.name = "show"
                       , Cmd.action = Cmd.io $ do
-                        putStrLn "ERROR: Don't know what to list.  Showing usage information.\n"
+                        putStrLn "ERROR: Don't know what to show.  Showing usage information.\n"
                         showUsage brsimCommands
-                      , Cmd.description = "List all the sets satisfying a certain property."
+                      , Cmd.description = "Show certain objects built based on the supplied reaction system."
                       }
 conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
                                , Cmd.action = Cmd.withNonOption Arg.file $
@@ -316,7 +316,7 @@ brsimCommand = Cmd.Command { Cmd.name = "brsim"
 brsimCommands :: Cmd.Commands IO
 brsimCommands = Cmd.Node brsimCommand [ Cmd.Node runCmd []
                                       , Cmd.Node interactCmd []
-                                      , Cmd.Node listCmd [ Cmd.Node conservedSetsCmd []
+                                      , Cmd.Node showCmd [ Cmd.Node conservedSetsCmd []
                                                          , Cmd.Node consDepGraph     [] ]
                                       , Cmd.Node help []
                                       ]
