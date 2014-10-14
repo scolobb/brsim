@@ -152,6 +152,13 @@ doListConservedSets rsFile format outputFile = do
   (rs, _) <- readInput rsFile format ""
   outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets $ reduce rs $ support rs
 
+-- | Shows the conservation dependency graph of the given reaction
+-- system.
+doConsDepGraph :: FilePath -> ReactionFormat -> FilePath -> IO ()
+doConsDepGraph rsFile format outputFile = do
+  (rs, _) <- readInput rsFile format ""
+  outputFunc outputFile $ showSymbolGraph $ buildConsDepGraph $ reduce rs $ support rs
+
 withTimeout :: Int -> IO () -> IO ()
 withTimeout tout act =
   let tout' = tout * 10^(6::Int)
@@ -279,6 +286,20 @@ conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
 \the reaction system described in FILE.\n\n\
 \The set of species is derived from the set of species used in the reactions.\n"
                                }
+consDepGraph = Cmd.Command { Cmd.name = "cons-dep-graph"
+                           , Cmd.action = Cmd.withNonOption Arg.file $
+                                              \rsFile ->
+                                              Cmd.withOption reactionFormatOpt $
+                                              \format ->
+                                              Cmd.withOption outputFileOpt $
+                                              \outputFile ->
+                                              Cmd.withOption timeoutOpt $
+                                              \tout ->
+                                              Cmd.io $ withTimeout (fromIntegral tout) $
+                                              doConsDepGraph rsFile format outputFile
+                               , Cmd.description = "Shows the conservation dependency graph \
+\of the reaction system described in FILE.\n"
+                           }
 
 help = Cmd.Command { Cmd.name = "help"
                    , Cmd.action = Cmd.io $ showUsage brsimCommands
@@ -295,7 +316,8 @@ brsimCommand = Cmd.Command { Cmd.name = "brsim"
 brsimCommands :: Cmd.Commands IO
 brsimCommands = Cmd.Node brsimCommand [ Cmd.Node runCmd []
                                       , Cmd.Node interactCmd []
-                                      , Cmd.Node listCmd [ Cmd.Node conservedSetsCmd [] ]
+                                      , Cmd.Node listCmd [ Cmd.Node conservedSetsCmd []
+                                                         , Cmd.Node consDepGraph     [] ]
                                       , Cmd.Node help []
                                       ]
 

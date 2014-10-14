@@ -32,12 +32,16 @@ module Formatter ( showSymbol
                  , annotateStateArrow
                  , annotatePlain
                  , annotateArrow
+                 , showSymbolGraph
                  ) where
 
 import ReactionSystems
 import qualified Data.Text.Lazy as Text
 import qualified Data.Set as Set
 import Data.List (intercalate)
+import Data.Graph.Inductive.Graph (nodes,suc,lab)
+import Data.Graph.Inductive.PatriciaTree
+import Data.Maybe (fromJust)
 
 -- | Pretty-print the supplied symbol.
 showSymbol :: Symbol -> Text.Text
@@ -115,3 +119,14 @@ annotatePlain = annotate showPlainReaction
 -- printing reactions in arrow format.
 annotateArrow :: ReactionSystem -> InteractiveProcess -> Text.Text
 annotateArrow = annotate showArrowReaction
+
+-- | Pretty prints a graph of symbols.
+showSymbolGraph :: Gr Symbol () -> Text.Text
+showSymbolGraph gr = let labj = fromJust . lab gr
+                     in Text.unlines
+                        $ concatMap (\v -> let sc = suc gr v
+                                               s = showSymbol $ labj v
+                                           in [ s `Text.append` " -> " `Text.append`
+                                                if null sc then ""
+                                                else showSpaceSymbols (Set.fromList $ map labj sc) ]
+                                    ) $ nodes gr
