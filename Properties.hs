@@ -239,10 +239,11 @@ listConservedSets rs@(ReactionSystem s _) =
       -- from 'p', together with their ancestors, as well as the
       -- components which contain elements from 'q', together with
       -- their descendants.
-      p_anc  = Set.fromList $ map ( ((flip ancestors)   cdg) . fst) $ mkNodes_ cdgMap p
-      q_desc = Set.fromList $ map ( ((flip descendants) cdg) . fst) $ mkNodes_ cdgMap q
+      p_anc  = concatMap ( ((flip ancestors)   cdg) . fst) $ mkNodes_ cdgMap p
+      q_desc = concatMap ( ((flip descendants) cdg) . fst) $ mkNodes_ cdgMap q
 
-      cdgc' = nfilter ( (`Set.notMember` (p_anc `Set.union` q_desc)) . snd) cdgc
+      good = null . (Data.List.intersect $ p_anc ++ q_desc)
+      cdgc' = nfilter (good . snd) cdgc
 
       -- 6. Compute the source sets of 'cdgc''.
       ssets = sourceSetsDAG cdgc'
