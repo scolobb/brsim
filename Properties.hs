@@ -242,7 +242,7 @@ listConservedSets rs@(ReactionSystem s _) =
       p_anc  = Set.fromList $ map ( ((flip ancestors)   cdg) . fst) $ mkNodes_ cdgMap p
       q_desc = Set.fromList $ map ( ((flip descendants) cdg) . fst) $ mkNodes_ cdgMap q
 
-      cdgc' = nfilter ( (`Set.member` (p_anc `Set.union` q_desc)) . snd) cdgc
+      cdgc' = nfilter ( (`Set.notMember` (p_anc `Set.union` q_desc)) . snd) cdgc
 
       -- 6. Compute the source sets of 'cdgc''.
       ssets = sourceSetsDAG cdgc'
