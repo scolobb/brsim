@@ -256,4 +256,4 @@ listConservedSets rs@(ReactionSystem s _) =
       symbs = Set.fromList . mlabj cdg . concat . mlabj cdgc'
 
       ms = map (Set.union q' . symbs) ssets
-  in Set.empty : filter (conservedInGraph bhg) ms
+  in (if Set.null q' then [] else [Set.empty]) ++ filter (conservedInGraph bhg) ms
