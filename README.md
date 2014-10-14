@@ -249,14 +249,27 @@ which is used to specify the file into which `brsim` will write the
 *context sequence*, so that you can keep a full record of your actions
 in an interactive session.
 
-## Listing Conserved Sets
+## Conservation Dependency Graphs and Listing All Conserved Sets
+
+`brsim` can build the conservation dependency graph for the given
+reaction system.  The vertices of this graph are labelled with the
+symbols from the alphabet of the reaction system.  Two vertices 'x'
+and 'y' are connected if all conserved sets containing 'y' also
+contain 'x'.
+
+To have `brsim` build the conservation dependency graph, run the
+following command:
+
+```
+brsim show cons-dep-graph [FILE]
+```
 
 `brsim` is also capable of listing the sets which are conserved by a
 given reaction system.  To achieve that goal, it should be invoked in
 the following way:
 
 ```
-brsim list conserved-sets [FILE]
+brsim show conserved-sets [FILE]
 ```
 
 The input file need only contain the definition of the reaction system
