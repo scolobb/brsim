@@ -29,14 +29,16 @@ module Properties ( conserved
                   , ConsDepGraph
                   , buildConsDepGraph'
                   , buildConsDepGraph
+                  , listConservedSets
                   ) where
 
 import ReactionSystems
 import qualified Data.Set as Set
-import Data.List (subsequences,partition,(\\))
+import Data.List
 import Data.Graph.Inductive.Graph
 import Data.Graph.Inductive.PatriciaTree
 import Data.Graph.Inductive.Query.DFS
+import Data.Graph.Inductive.NodeMap
 import qualified Data.Map as Map
 import Data.Tuple (swap)
 import Data.Maybe (fromJust)
@@ -207,3 +209,50 @@ sourceSetsDAG gr | isEmpty gr = [[]]
       gplusSrc  = sourceSetsDAG gplus
 
   in gminusSrc ++ [ s:src | src <- gplusSrc ]
+
+listConservedSets :: ReactionSystem -> [Symbols]
+listConservedSets rs@(ReactionSystem s _) =
+  -- 1. Compute the behaviour graph.
+  let bhg = buildBehaviourGraph rs
+
+      -- 2. Compute the connected components of 'bhg' and analyse
+      -- them.
+      cmps = components bhg
+
+      -- The cover of the component containing the empty set.  This
+      -- component always exists and is unique.
+      p = Set.toList $ Set.unions $ fromJust $ find (Set.empty `elem`) $ map (mlabj bhg) cmps
+
+      -- The elements appearing as singletons in the components whose
+      -- cover is the full set.
+      q  = nub $ concatMap (singletons bhg) $ filter ((== s) . cover bhg) cmps
+      q' = Set.fromList q
+
+      -- 3. Compute the conservation dependency graph.
+      cdg = buildConsDepGraph' bhg s
+      cdgMap = fromGraph cdg
+
+      -- 4. Compute the condensation of 'cdg'.
+      cdgc = condensation cdg
+
+      -- 5. Remove from 'cdgc' the components which contain elements
+      -- from 'p', together with their ancestors, as well as the
+      -- components which contain elements from 'q', together with
+      -- their descendants.
+      p_anc  = Set.fromList $ map ( ((flip ancestors)   cdg) . fst) $ mkNodes_ cdgMap p
+      q_desc = Set.fromList $ map ( ((flip descendants) cdg) . fst) $ mkNodes_ cdgMap q
+
+      cdgc' = nfilter ( (`Set.member` (p_anc `Set.union` q_desc)) . snd) cdgc
+
+      -- 6. Compute the source sets of 'cdgc''.
+      ssets = sourceSetsDAG cdgc'
+
+      -- 7. Add 'q' to each source set and test whether it is
+      -- conserved.
+
+      -- Gets the symbols included in the given set of vertices of the
+      -- condensation of 'cdg'.
+      symbs = Set.fromList . mlabj cdg . concat . mlabj cdgc'
+
+      ms = map (Set.union q' . symbs) ssets
+  in Set.empty : filter (conservedInGraph bhg) ms
