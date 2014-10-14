@@ -279,10 +279,13 @@ be just ignored.
 ## Getting Help
 
 If you type `brsim help`, you will get a more or less detailed
-explanation of the commands and options `brsim` takes.  If your
-question is not covered by the present `README` or `brsim help`, feel
-free to read the code directly or contact me at `sergiu` dot `ivanov`
-at something like `u-pec.fr`.
+explanation of the commands and options `brsim` takes.  To learn more
+about reaction systems I recommend the reference [0] in the
+bibliography.  To find more information about conservation dependency
+graphs and the algorithm for listing all conserved sets, check out the
+technical report [1].  If your question is not covered by the present
+`README` or `brsim help`, feel free to read the code directly or
+contact me at `sergiu` dot `ivanov` at something like `u-pec.fr`.
 
 ## Web Interface
 
@@ -299,3 +302,6 @@ Rozenberg.  *A Tour of Reaction Systems*.
 Int. J. Found. Comput. Sci., vol 22 (7), 2011,
 pp. 1499--1517. [DOI](http://dx.doi.org/10.1142/S0129054111008842).
 
+[1] Sepinoud Azimi, Cristian Gratie, Sergiu Ivanov, Ion Petre,
+*Dependency Graphs and Mass Conservation in Reaction Systems*. TUCS
+Technical Reports 1123, 2014.
