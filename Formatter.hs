@@ -40,7 +40,6 @@ module Formatter ( showSymbol
 import ReactionSystems
 import qualified Data.Text.Lazy as Text
 import qualified Data.Set as Set
-import Data.List (intercalate)
 import Data.Graph.Inductive.Graph (nodes,suc,lab)
 import Data.Graph.Inductive.PatriciaTree
 import Data.Maybe (fromJust)
