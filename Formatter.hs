@@ -55,23 +55,24 @@ handleEmpty t | otherwise = t
 
 -- Pretty-print the supplied set of symbol as a list with the given
 -- separator.
-showSymbols :: Text.Text -> Symbols -> Text.Text
-showSymbols sep = handleEmpty . Text.intercalate sep . Set.toList . Set.map showSymbol
+showSymbols :: Bool -> Text.Text -> Symbols -> Text.Text
+showSymbols mustHandle sep = (if mustHandle then handleEmpty else id)
+                             . Text.intercalate sep . Set.toList . Set.map showSymbol
 
 -- | Pretty-print the supplied set of symbol as a space-separated
 -- list.
-showSpaceSymbols = showSymbols " "
+showSpaceSymbols = showSymbols True " "
 
 -- | Pretty-print the supplied set of symbol as a plus-separated
 -- list.
-showPlusSymbols = showSymbols "+"
+showPlusSymbols = showSymbols True "+"
 
 surround :: Text.Text -> Text.Text -> Text.Text -> Text.Text
 surround pref suff xs = pref `Text.append` xs `Text.append` suff
 
 -- | Pretty-print the supplied set of symbols in the usual set
 -- notation (e.g. /{x,y}/).
-showSetSymbols = surround "{" "}" . showSymbols ","
+showSetSymbols = surround "{" "}" . showSymbols False ","
 
 -- | Pretty-print a list of lists of symbols.
 showListOfListsOfSymbols :: [Symbols] -> Text.Text
