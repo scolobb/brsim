@@ -146,24 +146,25 @@ interactiveRun rsFile format ctxFile outputFile annotationFile contextOutFile = 
           Plain -> annotateStatePlain
           Arrow -> annotateStateArrow
 
+-- | Carries out an action on the reaction system given in a file, and
+-- outputs the result.
+doRSAction :: (ReactionSystem -> Text.Text) -> FilePath -> ReactionFormat -> FilePath -> IO ()
+doRSAction action rsFile format outputFile = do
+  (rs, _) <- readInput rsFile format ""
+  outputFunc outputFile $ action $ reduce rs $ support rs
+
 -- | Lists all the sets that are conserved in a given reaction system.
 doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
-doListConservedSets rsFile format outputFile = do
-  (rs, _) <- readInput rsFile format ""
-  outputFunc outputFile $ showListOfListsOfSymbols $ listConservedSets $ reduce rs $ support rs
+doListConservedSets = doRSAction $ showListOfListsOfSymbols . listConservedSets
 
 -- | Shows the conservation dependency graph of the given reaction
 -- system.
 doConsDepGraph :: FilePath -> ReactionFormat -> FilePath -> IO ()
-doConsDepGraph rsFile format outputFile = do
-  (rs, _) <- readInput rsFile format ""
-  outputFunc outputFile $ showSymbolGraph $ buildConsDepGraph $ reduce rs $ support rs
+doConsDepGraph = doRSAction $ showSymbolGraph . buildConsDepGraph
 
 -- | Shows the behaviour graph of the given reaction system.
 doBehaviourGraph :: FilePath -> ReactionFormat -> FilePath -> IO ()
-doBehaviourGraph rsFile format outputFile = do
-  (rs, _) <- readInput rsFile format ""
-  outputFunc outputFile $ showSymbolsGraph $ buildBehaviourGraph $ reduce rs $ support rs
+doBehaviourGraph = doRSAction $ showSymbolsGraph . buildBehaviourGraph
 
 withTimeout :: Int -> IO () -> IO ()
 withTimeout tout act =
