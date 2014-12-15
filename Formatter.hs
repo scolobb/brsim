@@ -34,6 +34,7 @@ module Formatter ( showSymbol
                  , annotatePlain
                  , annotateArrow
                  , showSymbolGraph
+                 , showSymbolsGraph
                  ) where
 
 import ReactionSystems
@@ -142,3 +143,8 @@ showGraph showFunc gr =
 -- | Pretty prints a graph of symbols.
 showSymbolGraph :: Gr Symbol () -> Text.Text
 showSymbolGraph = showGraph showSymbol
+
+-- | Pretty prints a graph of sets of symbols (e.g. the behaviour
+-- graph of a reaction system).
+showSymbolsGraph :: Gr Symbols () -> Text.Text
+showSymbolsGraph = showGraph showSetSymbols
