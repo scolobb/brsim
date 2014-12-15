@@ -128,13 +128,17 @@ annotatePlain = annotate showPlainReaction
 annotateArrow :: ReactionSystem -> InteractiveProcess -> Text.Text
 annotateArrow = annotate showArrowReaction
 
+-- | Pretty prints a graph.
+showGraph :: (a -> Text.Text) -> Gr a () -> Text.Text
+showGraph showFunc gr =
+  let labj = fromJust . lab gr
+  in Text.unlines $ concatMap
+     (\v -> let sc = suc gr v
+                s = showFunc $ labj v
+            in [ s `Text.append` " -> "
+                 `Text.append` ( Text.intercalate " " $ map (showFunc . labj) sc )]
+     ) $ nodes gr
+
 -- | Pretty prints a graph of symbols.
 showSymbolGraph :: Gr Symbol () -> Text.Text
-showSymbolGraph gr = let labj = fromJust . lab gr
-                     in Text.unlines
-                        $ concatMap (\v -> let sc = suc gr v
-                                               s = showSymbol $ labj v
-                                           in [ s `Text.append` " -> " `Text.append`
-                                                if null sc then ""
-                                                else showSpaceSymbols (Set.fromList $ map labj sc) ]
-                                    ) $ nodes gr
+showSymbolGraph = showGraph showSymbol
