@@ -159,6 +159,12 @@ doConsDepGraph rsFile format outputFile = do
   (rs, _) <- readInput rsFile format ""
   outputFunc outputFile $ showSymbolGraph $ buildConsDepGraph $ reduce rs $ support rs
 
+-- | Shows the behaviour graph of the given reaction system.
+doBehaviourGraph :: FilePath -> ReactionFormat -> FilePath -> IO ()
+doBehaviourGraph rsFile format outputFile = do
+  (rs, _) <- readInput rsFile format ""
+  outputFunc outputFile $ showSymbolsGraph $ buildBehaviourGraph $ reduce rs $ support rs
+
 withTimeout :: Int -> IO () -> IO ()
 withTimeout tout act =
   let tout' = tout * 10^(6::Int)
@@ -301,6 +307,21 @@ consDepGraph = Cmd.Command { Cmd.name = "cons-dep-graph"
 \of the reaction system described in FILE.\n"
                            }
 
+behaviourGraph = Cmd.Command { Cmd.name = "behaviour-graph"
+                             , Cmd.action = Cmd.withNonOption Arg.file $
+                                            \rsFile ->
+                                            Cmd.withOption reactionFormatOpt $
+                                            \format ->
+                                            Cmd.withOption outputFileOpt $
+                                            \outputFile ->
+                                            Cmd.withOption timeoutOpt $
+                                            \tout ->
+                                            Cmd.io $ withTimeout (fromIntegral tout) $
+                                            doBehaviourGraph rsFile format outputFile
+                             , Cmd.description = "Shows the behaviour graph of the \
+\reaction system described in FILE.\n"
+                             }
+
 help = Cmd.Command { Cmd.name = "help"
                    , Cmd.action = Cmd.io $ showUsage brsimCommands
                    , Cmd.description = "Show this usage information."
@@ -317,7 +338,8 @@ brsimCommands :: Cmd.Commands IO
 brsimCommands = Cmd.Node brsimCommand [ Cmd.Node runCmd []
                                       , Cmd.Node interactCmd []
                                       , Cmd.Node showCmd [ Cmd.Node conservedSetsCmd []
-                                                         , Cmd.Node consDepGraph     [] ]
+                                                         , Cmd.Node consDepGraph     []
+                                                         , Cmd.Node behaviourGraph   [] ]
                                       , Cmd.Node help []
                                       ]
 
