@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 module Formatter ( showSymbol
                  , showSpaceSymbols
                  , showPlusSymbols
+                 , showSetSymbols
                  , showListOfListsOfSymbols
                  , showPlainReaction
                  , showArrowReaction
@@ -64,6 +65,13 @@ showSpaceSymbols = showSymbols " "
 -- | Pretty-print the supplied set of symbol as a plus-separated
 -- list.
 showPlusSymbols = showSymbols "+"
+
+surround :: Text.Text -> Text.Text -> Text.Text -> Text.Text
+surround pref suff xs = pref `Text.append` xs `Text.append` suff
+
+-- | Pretty-print the supplied set of symbols in the usual set
+-- notation (e.g. /{x,y}/).
+showSetSymbols = surround "{" "}" . showSymbols ","
 
 -- | Pretty-print a list of lists of symbols.
 showListOfListsOfSymbols :: [Symbols] -> Text.Text
