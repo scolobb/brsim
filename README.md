@@ -249,7 +249,19 @@ which is used to specify the file into which `brsim` will write the
 *context sequence*, so that you can keep a full record of your actions
 in an interactive session.
 
-## Conservation Dependency Graphs and Listing All Conserved Sets
+## Retrieving Information about the Reaction System
+
+`brsim` can be told to construct a number of objects providing
+structural and dynamic information about a reaction system via the
+command line command `show`.
+
+One of the most basic objects describing the dynamics of a reaction
+system is the behaviour graph.  To get the adjacency lists of this
+graph, use the following syntax:
+
+```
+brsim show behaviour-graph [FILE]
+```
 
 `brsim` can build the conservation dependency graph for the given
 reaction system.  The vertices of this graph are labelled with the
