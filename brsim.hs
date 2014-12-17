@@ -187,6 +187,14 @@ reactionFormat = Arg.Type { Arg.parser = \val -> case val of
                           , Arg.defaultValue = Just Plain
                           }
 
+graphFormat = Arg.Type { Arg.parser = \val -> case val of
+                            "text" -> Right TextGraph
+                            "dot"  -> Right DotGraph
+                            str -> Left $ "Unknown graph format: " ++ show str
+                       , Arg.name = "text|dot"
+                       , Arg.defaultValue = Just TextGraph
+                       }
+
 reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Plain
                     "\n    The format of the reaction description.\n\n\
 \    The default value of this argument is \"plain\", in which case the reactions should be\n\
