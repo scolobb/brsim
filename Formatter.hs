@@ -35,14 +35,16 @@ module Formatter ( showSymbol
                  , annotateArrow
                  , showSymbolGraph
                  , showSymbolsGraph
+                 , graph2dot
                  ) where
 
 import ReactionSystems
 import qualified Data.Text.Lazy as Text
 import qualified Data.Set as Set
-import Data.Graph.Inductive.Graph (nodes,suc,lab)
+import Data.Graph.Inductive.Graph hiding (Context)
 import Data.Graph.Inductive.PatriciaTree
 import Data.Maybe (fromJust)
+import Text.Dot as Dot
 
 -- | Pretty-print the supplied symbol.
 showSymbol :: Symbol -> Text.Text
@@ -148,3 +150,17 @@ showSymbolGraph = showGraph showSymbol
 -- graph of a reaction system).
 showSymbolsGraph :: Gr Symbols () -> Text.Text
 showSymbolsGraph = showGraph showSetSymbols
+
+-- | Produces the DOT format description of the given graph.
+graph2dot' :: Graph gr => (a -> String) -> (b -> String) -> gr a b -> Dot.Dot ()
+graph2dot' showNode showEdge gr = do
+  mapM_ genNode $ labNodes gr
+  mapM_ genEdge $ labEdges gr
+
+  where genNode (v,vLab) = userNode (userNodeId v) [("label", showNode vLab)]
+        genEdge (v,w,lab) = edge (userNodeId v) (userNodeId w)
+                            [("label", showEdge lab)]
+
+-- | Produce the DOT format description of the given graph in a string.
+graph2dot :: Graph gr => (a -> String) -> (b -> String) -> gr a b -> String
+graph2dot showNode showEdge = Dot.showDot . graph2dot' showNode showEdge
