@@ -41,6 +41,10 @@ data ReactionFormat = Plain -- A reaction is given as three lists of symbol name
                     | Arrow -- A reaction is given in a notation similar to the chemical one.
                     deriving (Eq, Ord, Show, Read)
 
+-- The possible output formats for graphs.
+data GraphFormat = TextGraph -- The adjacency lists of the graph are output in text mode.
+                 | DotGraph  -- A DOT output is produced.
+
 -- | Reads the supplied file containing the description of the reaction
 -- system and, maybe, the list of contexts.  If a separate context
 -- file is specified, the list of context in the reaction system file
