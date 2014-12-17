@@ -33,6 +33,7 @@ import System.Console.Readline (readline)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as TextIO
 import qualified Data.Set as Set
+import Data.Graph.Inductive.PatriciaTree (Gr)
 import Control.Monad (when)
 import System.Timeout
 
@@ -161,14 +162,23 @@ doRSAction action rsFile format outputFile = do
 doListConservedSets :: FilePath -> ReactionFormat -> FilePath -> IO ()
 doListConservedSets = doRSAction $ showListOfListsOfSymbols . listConservedSets
 
+-- | Shows a graph build for a reaction system described in a file.
+doShowGraph :: (ReactionSystem -> Gr a ()) -> (a -> String) -> GraphFormat
+               -> FilePath -> ReactionFormat -> FilePath -> IO ()
+doShowGraph func showNode format =
+  let output = case format of
+        TextGraph -> showGraph (Text.pack . showNode)
+        DotGraph  -> Text.pack . graph2dot showNode (\_ -> "")
+  in doRSAction $ output . func
+
 -- | Shows the conservation dependency graph of the given reaction
 -- system.
-doConsDepGraph :: FilePath -> ReactionFormat -> FilePath -> IO ()
-doConsDepGraph = doRSAction $ showSymbolGraph . buildConsDepGraph
+doConsDepGraph :: GraphFormat -> FilePath -> ReactionFormat -> FilePath -> IO ()
+doConsDepGraph = doShowGraph buildConsDepGraph (Text.unpack . showSymbol)
 
 -- | Shows the behaviour graph of the given reaction system.
-doBehaviourGraph :: FilePath -> ReactionFormat -> FilePath -> IO ()
-doBehaviourGraph = doRSAction $ showSymbolsGraph . buildBehaviourGraph
+doBehaviourGraph :: GraphFormat -> FilePath -> ReactionFormat -> FilePath -> IO ()
+doBehaviourGraph = doShowGraph buildBehaviourGraph (Text.unpack . showSetSymbols)
 
 withTimeout :: Int -> IO () -> IO ()
 withTimeout tout act =
@@ -210,7 +220,7 @@ reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Plain
 \        a b -> c d | e f\n"
 
 graphFormatOpt = Arg.option ['g'] ["graph-format"] graphFormat TextGraph
-                 "\n The format it which the graph should be output.\n\n\
+                 "\n    The format it which the graph should be output.\n\n\
 \    The default value of this argument is \"text\", in which case the graph is output\n\
 \    in the form of an adjacency list.  It is possible to specify the value \"dot\", in\n\
 \    which case the graph will be output in DOT format."
@@ -316,12 +326,14 @@ consDepGraph = Cmd.Command { Cmd.name = "cons-dep-graph"
                                               \rsFile ->
                                               Cmd.withOption reactionFormatOpt $
                                               \format ->
+                                              Cmd.withOption graphFormatOpt $
+                                              \gformat ->
                                               Cmd.withOption outputFileOpt $
                                               \outputFile ->
                                               Cmd.withOption timeoutOpt $
                                               \tout ->
                                               Cmd.io $ withTimeout (fromIntegral tout) $
-                                              doConsDepGraph rsFile format outputFile
+                                              doConsDepGraph gformat rsFile format outputFile
                                , Cmd.description = "Shows the conservation dependency graph \
 \of the reaction system described in FILE.\n"
                            }
@@ -331,12 +343,14 @@ behaviourGraph = Cmd.Command { Cmd.name = "behaviour-graph"
                                             \rsFile ->
                                             Cmd.withOption reactionFormatOpt $
                                             \format ->
+                                            Cmd.withOption graphFormatOpt $
+                                            \gformat ->
                                             Cmd.withOption outputFileOpt $
                                             \outputFile ->
                                             Cmd.withOption timeoutOpt $
                                             \tout ->
                                             Cmd.io $ withTimeout (fromIntegral tout) $
-                                            doBehaviourGraph rsFile format outputFile
+                                            doBehaviourGraph gformat rsFile format outputFile
                              , Cmd.description = "Shows the behaviour graph of the \
 \reaction system described in FILE.\n"
                              }
