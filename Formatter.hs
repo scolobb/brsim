@@ -33,6 +33,7 @@ module Formatter ( showSymbol
                  , annotateStateArrow
                  , annotatePlain
                  , annotateArrow
+                 , showGraph
                  , showSymbolGraph
                  , showSymbolsGraph
                  , graph2dot
