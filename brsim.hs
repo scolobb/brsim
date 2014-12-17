@@ -209,6 +209,12 @@ reactionFormatOpt = Arg.option ['f'] ["format"] reactionFormat Plain
 \    Thus, the same reaction as above could be specified in the following way:\n\
 \        a b -> c d | e f\n"
 
+graphFormatOpt = Arg.option ['g'] ["graph-format"] graphFormat TextGraph
+                 "\n The format it which the graph should be output.\n\n\
+\    The default value of this argument is \"text\", in which case the graph is output\n\
+\    in the form of an adjacency list.  It is possible to specify the value \"dot\", in\n\
+\    which case the graph will be output in DOT format."
+
 contextFileOpt = Arg.option ['x'] ["context"] (Arg.optional "" Arg.file) ""
                  "\n    The file listing the contexts of an interactive process.\n\n\
 \    If the context file is given, it should contain one context per line, each context\n\
