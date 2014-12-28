@@ -235,13 +235,14 @@ listConservedSets rs@(ReactionSystem s _) =
       -- 4. Compute the condensation of 'cdg'.
       cdgc = condensation cdg
 
-      -- 5. Remove from 'cdgc' the components which contain elements
-      -- from 'p', together with their ancestors, as well as the
-      -- components which contain elements from 'q', together with
-      -- their descendants.
+      -- Extend the set 'p' with its descendants in the conservation
+      -- dependency graph, and 'q' with its ancestors.
       p_desc = concatMap ( ((flip descendants) cdg) . fst) $ mkNodes_ cdgMap p
       q_anc  = concatMap ( ((flip ancestors  ) cdg) . fst) $ mkNodes_ cdgMap q
 
+      -- 5. Compute the reduced condensation of the conservation
+      -- dependency graph by removing from it all the nodes which
+      -- contain elements from 'p_desc' or 'q_anc'.
       good = null . (Data.List.intersect $ p_desc ++ q_anc)
       cdgc' = nfilter (good . snd) cdgc
 
