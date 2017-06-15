@@ -148,43 +148,6 @@ buildConsDepGraph rs@(ReactionSystem s _) = buildConsDepGraph' (buildBehaviourGr
 sources :: Graph gr => gr a b -> [Node]
 sources gr = [ v | v <- nodes gr , indeg gr v == 0 ]
 
--- Only leaves in the graph the nodes which satisfy the given
--- predicate.
-nfilter :: DynGraph gr => (LNode a -> Bool) -> gr a b -> gr a b
-nfilter pred gr = buildGr $ ufold (\(inadj, v, l, outadj) res ->
-                                    if not $ pred (v, l)
-                                    then res
-                                    else let good (_, w) = pred (w, labj gr w)
-                                             outadj' = filter good outadj
-                                             inadj'  = filter good inadj
-                                         in (inadj', v, l, outadj'):res
-                                  ) [] gr
-
--- Builds a subgraph of the given graph which only includes the
--- supplied nodes.
-subgraph :: DynGraph gr => [Node] -> gr a b -> gr a b
-subgraph vs = let base = Set.fromList vs
-              in nfilter ((`Set.member` base) . fst)
-
--- Checks if there is a directed edge between two vertices.
-isEdge :: Graph gr => gr a b -> Node -> Node -> Bool
-isEdge gr v w = w `elem` (suc gr v)
-
--- Computes the condensation of the given graph, i.e., the graph of
--- its strongly connected components.
-condensation :: Graph gr => gr a b -> gr [Node] ()
-condensation gr = let sccs = scc gr
-                      vs = zip [1..] sccs
-                      vMap = Map.fromList $ map swap vs
-                      es = do
-                        c1 <- sccs
-                        c2 <- sccs
-
-                        if (c1 /= c2) && ( or [ isEdge gr v w | v <- c1, w <- c2 ] )
-                          then [(vMap Map.! c1, vMap Map.! c2, ())]
-                          else []
-                  in mkGraph vs es
-
 descendants :: Graph gr => Node -> gr a b -> [Node]
 descendants = reachable
 
@@ -244,7 +207,7 @@ listConservedSets rs@(ReactionSystem s _) =
       -- dependency graph by removing from it all the nodes which
       -- contain elements from 'p_desc' or 'q_anc'.
       good = null . (Data.List.intersect $ p_desc ++ q_anc)
-      cdgc' = nfilter (good . snd) cdgc
+      cdgc' = labnfilter (good . snd) cdgc
 
       -- 6. Compute the source sets of 'cdgc''.
       ssets = sourceSetsDAG cdgc'
