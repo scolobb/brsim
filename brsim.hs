@@ -277,6 +277,7 @@ runCmd = Cmd.Command { Cmd.name = "run"
 \list of contexts to run the simulation in.  If the reaction system and the contexts\n\
 \are given in the same file, they should be separated by a line containing three\n\
 \dashes: \"---\".\n"
+                     , Cmd.shorten = True
               }
 
 interactCmd = Cmd.Command { Cmd.name = "interact"
@@ -298,6 +299,7 @@ interactCmd = Cmd.Command { Cmd.name = "interact"
 \out the next state interactively.  If a context sequence is specified in the input file\n\
 \or in a separate context file, the simulator will first run the reaction system with\n\
 \the given context sequence and will start the interactive session at the last state.\n"
+                          , Cmd.shorten = True
                           }
 
 showCmd = Cmd.Command { Cmd.name = "show"
@@ -305,6 +307,7 @@ showCmd = Cmd.Command { Cmd.name = "show"
                         putStrLn "ERROR: Don't know what to show.  Showing usage information.\n"
                         showUsage brsimCommands
                       , Cmd.description = "Show certain objects built based on the supplied reaction system."
+                      , Cmd.shorten = True
                       }
 conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
                                , Cmd.action = Cmd.withNonOption Arg.file $
@@ -320,6 +323,7 @@ conservedSetsCmd = Cmd.Command { Cmd.name = "conserved-sets"
                                , Cmd.description = "Lists all sets which are conserved in \
 \the reaction system described in FILE.\n\n\
 \The set of species is derived from the set of species used in the reactions.\n"
+                               , Cmd.shorten = True
                                }
 consDepGraph = Cmd.Command { Cmd.name = "cons-dep-graph"
                            , Cmd.action = Cmd.withNonOption Arg.file $
@@ -336,6 +340,7 @@ consDepGraph = Cmd.Command { Cmd.name = "cons-dep-graph"
                                               doConsDepGraph gformat rsFile format outputFile
                                , Cmd.description = "Shows the conservation dependency graph \
 \of the reaction system described in FILE.\n"
+                               , Cmd.shorten = True
                            }
 
 behaviourGraph = Cmd.Command { Cmd.name = "behaviour-graph"
@@ -353,11 +358,13 @@ behaviourGraph = Cmd.Command { Cmd.name = "behaviour-graph"
                                             doBehaviourGraph gformat rsFile format outputFile
                              , Cmd.description = "Shows the behaviour graph of the \
 \reaction system described in FILE.\n"
+                             , Cmd.shorten = True
                              }
 
 help = Cmd.Command { Cmd.name = "help"
                    , Cmd.action = Cmd.io $ showUsage brsimCommands
                    , Cmd.description = "Show this usage information."
+                   , Cmd.shorten = True
                }
 
 brsimCommand = Cmd.Command { Cmd.name = "brsim"
@@ -365,6 +372,7 @@ brsimCommand = Cmd.Command { Cmd.name = "brsim"
                              putStrLn "ERROR: No reaction system specified.  Showing usage information.\n"
                              showUsage brsimCommands
                            , Cmd.description = "A Basic Reaction System Simulator."
+                           , Cmd.shorten = True
                            }
 
 brsimCommands :: Cmd.Commands IO
