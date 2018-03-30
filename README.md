@@ -4,10 +4,10 @@
 description of the reactions of a reaction system and a context sequence,
 `brsim` can produce the corresponding result sequence, and, if
 required, an annotated description of the obtained interactive
-process, which includes listing, for each step, the context, the
+process, which includes listing for each step the context, the
 result, the full state, as well as the enabled reactions.  `brsim` also
-offers an interactive mode in which the contexts is to be provided by
-the user.  Finally, `brsim` can be used to list all the sets which are
+offers an interactive mode in which the context is to be provided by
+the user at every step.  Finally, `brsim` can be used to list all the sets which are
 conserved in a reaction system.
 
 `brsim` is distributed under the terms of GNU GPLv3 license.
@@ -130,7 +130,7 @@ The contexts are specified one per line, so the first context is the
 set containing `a` and `b`, the second context is the set containing
 `c` and `d`, etc.  Empty lines and lines starting with the hash symbol
 (comment lines) are ignored.  This is where the dot-notation for empty
-sets comes really handy, since you can specify an empty context by
+sets comes in really handy, since you can specify an empty context by
 just putting a `.` on the corresponding line.
 
 Correspondingly, the file `example-arrow.rs` containing the
@@ -244,7 +244,7 @@ Next context:
 
 You can use the same options as for the batch mode to control the
 format of the input file and how and which output files are produced.
-An option specific of the interactive mode is `--output-context`,
+An option specific to the interactive mode is `--output-context`,
 which is used to specify the file into which `brsim` will write the
 *context sequence*, so that you can keep a full record of your actions
 in an interactive session.
