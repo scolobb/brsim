@@ -3,7 +3,7 @@
 
 A Basic Reaction Systems Simulator.
 
-Copyright 2014 by Sergiu Ivanov <sergiu.ivanov@u-pec.fr>
+Copyright 2014-2018 by Sergiu Ivanov <sergiu.ivanov@univ-evry.fr>
 
 This file is part of brsim.
 
