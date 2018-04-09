@@ -297,7 +297,7 @@ bibliography.  To find more information about conservation dependency
 graphs and the algorithm for listing all conserved sets, check out the
 technical report [1].  If your question is not covered by the present
 `README` or `brsim help`, feel free to read the code directly or
-contact me at `sergiu` dot `ivanov` at something like `u-pec.fr`.
+contact me at `sergiu` dot `ivanov` at something like `univ-evry.fr`.
 
 ## Web Interface
 
