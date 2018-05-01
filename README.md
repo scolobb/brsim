@@ -276,6 +276,15 @@ following command:
 brsim show cons-dep-graph [FILE]
 ```
 
+`brsim` can output both graphs in the [DOT
+format](https://en.wikipedia.org/wiki/DOT_(graph_description_language)).
+For this, use the `--graph-format` option in the following way:
+
+```
+brsim show behaviour-graph --graph-format=dot [FILE]
+brsim show cons-dep-graph --graph-format=dot [FILE]
+```
+
 `brsim` is also capable of listing the sets which are conserved by a
 given reaction system.  To achieve that goal, it should be invoked in
 the following way:
