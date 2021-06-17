@@ -20,8 +20,8 @@ executable brsim
   main-is:             brsim.hs
   other-modules:       ReactionSystems, Formatter, Parser, Properties
   other-extensions:    OverloadedStrings
-  build-depends:       base >=4.5 && <4.12, containers >=0.4 && <0.6, text >=0.11 && <1.3,
-                       console-program >=0.3 && <0.5, readline ==1.0.*, array >=0.4, fgl >=5.5 && <5.7,
+  build-depends:       base >=4.5 && <4.14, containers >=0.4 && <0.6, text >=0.11 && <1.3,
+                       console-program >=0.3 && <0.5, readline ==1.0.*, array >=0.4, fgl >=5.5 && <5.8,
                        dotgen >=0.4 && <0.5
   -- hs-source-dirs:      
   default-language:    Haskell2010
