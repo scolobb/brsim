@@ -311,10 +311,8 @@ contact me at `sergiu` dot `ivanov` at something like `univ-evry.fr`.
 ## Web Interface
 
 It is also possible to use the simulator
-[online](http://combio.abo.fi/research/reaction-systems/reaction-system-simulator/)
-on the Web page of the [Combio laboratory](http://combio.abo.fi) at
-the Åbo Akademi University.  This page also lists further examples of
-reaction systems.
+[online](https://combio.org/portfolio/webrsim-reaction-system-simulator/).
+This page also lists further examples of reaction systems.
 
 ## References
 
